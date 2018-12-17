@@ -1,0 +1,111 @@
+<template>
+    <div class="aside">
+        <el-row class="tac">
+            <el-col>
+                <el-menu :default-active="$router.path" router class="el-menu-vertical-demo" @open="handleOpen" @select="selectMenu" :unique-opened="isUnique">                
+                    <template v-for="(item,key) in menu">
+                        <el-menu-item :index="item.path" v-if="!item.childMenu" :key="key">
+                            <i :class="item.icon"></i>
+                            <span slot="title">{{item.title}}</span>
+                        </el-menu-item>
+                        <el-submenu :index="item.path" :key="key" v-else>
+                            <template slot="title">
+                                <i :class="item.icon"></i>
+                                <span slot="title">{{item.title}}</span>
+                            </template>
+                            <template v-for="(sub,key) in item.childMenu">
+                                <el-menu-item :index="sub.path" :key="key">{{sub.title}}</el-menu-item>
+                            </template>
+                        </el-submenu>
+                    </template>
+                </el-menu>
+            </el-col>
+        </el-row>
+    </div>
+</template>
+
+<script>
+export default {
+  name: "Aside",
+  data() {
+    return {
+        isUnique:false,
+        menu:[
+            {
+                title:"首页",
+                icon:"el-icon-menu",
+                path:"/home"
+            },
+            {
+                title:"用户管理",
+                icon:"el-icon-menu",
+                path:"",
+                childMenu:[
+                    {
+                        title:"用户列表",
+                        icon:"",
+                        path:"/userList"
+                    },
+                    {
+                        title:"用户详情",
+                        icon:"",
+                        path:"/userDetail"
+                    },
+                ]
+            },
+            {
+                title:"内容管理",
+                icon:"el-icon-news",
+                path:"",
+                childMenu:[
+                    {
+                        title:"新闻列表",
+                        icon:"",
+                        path:"/newsList"
+                    },
+                    {
+                        title:"新闻发布",
+                        icon:"",
+                        path:"/newsPub"
+                    },
+                    {
+                        title:"活动列表",
+                        icon:"",
+                        path:"/activityList"
+                    },
+                    {
+                        title:"活动发布",
+                        icon:"",
+                        path:"/activityRelease"
+                    },
+                    {
+                        title:"评论管理",
+                        icon:"",
+                        path:"/commentManage"
+                    },
+                    {
+                        title:"轮播图管理",
+                        icon:"",
+                        path:"/bannerManage"
+                    },
+                ]
+            },
+        ],
+    };
+  },
+  methods:{
+      //sub-menu展开
+      handleOpen(key,keyPath){
+        //   console.log(key,keyPath)
+      },
+      //菜单激活
+      selectMenu(key,keyPath){
+        //   console.log(key,keyPath)
+      }
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+</style>

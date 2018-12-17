@@ -1,0 +1,79 @@
+<template>
+    <div id="app">
+        <el-container>
+            <el-container v-if="!layout">
+                <router-view></router-view>
+            </el-container>
+            <template v-else>
+                <el-header><Header></Header></el-header>
+                <el-container>
+                    <el-aside width="200px"><Aside></Aside></el-aside>
+                    <el-main>
+                        <router-view/>
+                    </el-main>  
+                </el-container>
+            </template>
+        </el-container>
+    </div>
+</template>
+
+<script>
+import Header from './components/header/header.vue'
+import Aside from './components/aside/aside.vue'
+export default {
+  name: 'App',
+  components: {Header,Aside},
+    data(){
+        return {
+            layout: true
+        }
+    },
+    watch: {
+        '$route': function(to, from){
+            if(to.path=='/'){
+                this.layout = false;
+            }else{
+                this.layout = true;
+            }
+        }
+    }
+}
+</script>
+
+<style>
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin:0;
+    padding:0;
+    height:100%;
+  }
+  .el-header {
+    background-color: #409EFF;
+    border-bottom: 1px solid #999;
+    color: #333;
+    line-height: 60px;
+    color:#fff;
+  }
+  
+  .el-aside {
+    color: #333;
+    /* background-color: #D3DCE6; */
+    border-right:1px solid #d3d3d3
+  }
+  .el-aside .tac{
+      height:100%
+  }
+
+  .el-main {
+      /* background-color: #d3d3d3; */
+      color: #333;
+  }
+  html, body {
+      height: 100%;
+  }
+  #app .el-container {
+      height: 100%;
+  }
+</style>

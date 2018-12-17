@@ -1,0 +1,266 @@
+<template>
+    <div class="comment-list-container">
+        <div class="comment-list-header">
+            <ul>
+                <li>
+                    <span>时间</span>
+                    <el-date-picker
+                        v-model="searchData.commentDate"
+                        size="small"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        format="yyyy 年 MM 月 dd 日"
+                        value-format="timestamp">
+                    </el-date-picker>
+                </li>
+                <!-- <li>
+                    <span>类别</span>
+                    <el-select filterable size="small" v-model="searchData.type" placeholder="请选择">
+                        <el-option v-for="(item,index) in typeOptions" :key="index" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                </li> -->
+                <li>
+                    <el-button type="primary" size="small" @click="searchHandler">搜索</el-button>
+                </li>
+            </ul>
+        </div>
+        <div class="comment-list-main">
+            <el-table :data="tableData" border style="width: 100%" size="small">
+                <el-table-column  align="center" type="index" label="序号" width="60"></el-table-column>
+                <el-table-column  align="center" prop="id" label="类别" width="160"></el-table-column>
+                <el-table-column  align="center" prop="title" label="标题" width=""></el-table-column>
+                <el-table-column  align="center" label="评论时间" width="200">
+                    <template slot-scope="scope">
+                        {{scope.row.createTime | formatDate}}
+                    </template>   
+                </el-table-column>
+                <el-table-column  align="center" prop="editorName" label="评论者" width="180"></el-table-column>
+                <el-table-column  align="center" prop="content" label="评论内容" width=""></el-table-column>
+                <el-table-column  align="center"  width="180" label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text " size="small" @click="deleteItemHandler(scope.row)" class="text-danger">删除</el-button>
+                    </template>   
+                </el-table-column>
+            </el-table>
+        </div>
+        <div class="comment-list-footer">
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="pager.currentPage"
+                :page-size="pager.pageSize"
+                layout="prev, pager, next, jumper"
+                :total="pager.total">
+            </el-pagination>
+        </div>
+    </div>
+</template>
+
+<script>
+var userId = sessionStorage.getItem("userId");
+import PageData from "../../api/contentManage/commentManage.js"
+import {formatDate} from '../../util/base.js';
+import $ from 'jquery'
+
+export default {
+  name: "newsList",
+  data() {
+    return {
+      searchData: {
+        commentDate: "",
+        type: ""
+      },
+      tableData: [],
+      pager: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      },
+      typeOptions: [
+        {
+          label: "全部",
+          value: -1
+        },
+        {
+          label: "新闻",
+          value: 0
+        },
+        {
+          label: "活动",
+          value: 1
+        }
+      ],
+    };
+  },
+  created() {
+    this.getTableData();
+  },
+  filters: {
+    formatDate(time) {
+        if(time) {
+            var date = new Date(time);
+            return formatDate(date, "yyyy-MM-dd hh:mm");
+        }
+    }
+  },
+  methods: {
+    getTableData() {
+      var _this = this;
+      var data = {
+        userId: sessionStorage.getItem("userId"),
+        pageNo: this.pager.currentPage,
+        pageSize: this.pager.pageSize
+      };
+      PageData.listInfo(data).then(function(d) {
+        if (d.resultCode == 200) {
+          _this.tableData = d.resultJson.pageContent;
+          _this.pager.pageNo = d.resultJson.pageNum;
+          _this.pager.totalPage = d.resultJson.totalPage;
+          _this.pager.total = d.resultJson.count;
+        } else {
+          _this.$message({
+            type: "warning",
+            message: d.resultMessage
+          });
+        }
+      });
+    },
+    //点击搜索
+    searchHandler() {
+      var _this = this;
+      var data = {
+        pageNo: this.pager.currentPage,
+        pageSize: this.pager.pageSize
+      };
+      data.userId = sessionStorage.getItem("userId");
+      if (this.searchData.commentDate) {
+        data.beginTime = this.searchData.commentDate[0];
+        data.endTime = this.searchData.commentDate[1];
+      }
+      // if (this.searchData.type) {
+      //     if(this.searchData.type == '-1') {
+      //         data.type = '';
+      //     } else {
+      //         data.type = this.searchData.type;
+      //     }
+      // }
+
+      PageData.listInfo(data).then(d => {
+        if (d.resultCode == 200) {
+          _this.tableData = d.resultJson.pageContent;
+          _this.pager.pageNo = d.resultJson.pageNum;
+          _this.pager.totalPage = d.resultJson.totalPage;
+          _this.pager.total = d.resultJson.count;
+        } else {
+          _this.$message({
+            type: "warning",
+            message: d.resultMessage
+          });
+        }
+      });
+    },
+    //pageSize 改变时会触发
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    //当前页变动时触发
+    handleCurrentChange(val) {
+      this.pager.currentPage = val;
+      this.getTableData();
+    },
+    //关闭详情弹窗
+    handleClose() {
+    },
+    //点击删除
+    deleteItemHandler(row) {
+        var _this = this;
+        var data = "id=" + row.id;
+        var data = {
+            userId: sessionStorage.getItem("userId"),
+            id: row.id
+        };
+        this.$confirm("请确认是否删除信息?", "友情提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+        })
+        .then(() => {
+            PageData.deleteOne(data).then(d => {
+                if (d.resultCode == 200) {
+                    _this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                _this.getTableData();
+                } else {
+                    _this.$message({
+                        type: "warning",
+                        message: "删除失败，请稍后重试。"
+                        // message: d.resultMessage
+                    });
+                }
+            }).catch(()=>{
+                _this.$message({
+                    type: "warning",
+                    message: "删除失败，请稍后重试。"
+                });
+            });
+        })
+        .catch(() => {});
+    },
+  },
+  computed: {},
+  mounted() {}
+};
+</script>
+
+<style>
+.comment-list-container .comment-list-header ul {
+  list-style: none;
+  overflow: auto;
+}
+.comment-list-container .comment-list-main {
+  padding-top: 20px;
+}
+.comment-list-container .comment-list-footer {
+  text-align: right;
+  padding-top: 30px;
+}
+.comment-list-header ul li {
+  float: left;
+  padding-right: 20px;
+}
+.comment-list-header ul li .el-input {
+  display: inline-block !important;
+  width: 200px !important;
+}
+.news-detail-dialog {
+  /* overflow: scroll; */
+}
+.comment-list-container .newsTitle {
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+}
+.comment-list-container .newsAuthor {
+  height: 40px;
+  line-height: 40px;
+}
+.comment-list-container .newsContent {
+  height: 40px;
+  line-height: 40px;
+}
+.comment-list-container .el-dialog .el-dialog__body {
+  overflow-y: auto !important;
+  max-height: 300px;
+  height: auto;
+}
+.comment-list-container .el-dialog__footer{
+  text-align: center;
+}
+.comment-list-container .text-danger{
+  color: #F56C6C;
+}
+</style>
