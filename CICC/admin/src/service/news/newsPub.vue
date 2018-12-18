@@ -37,7 +37,7 @@
                             :value="item.value">
                         </el-option>
                     </el-select>
-                    <div class="select-person" v-show="authVal == 2">
+                    <!-- <div class="select-person" v-show="authVal == 2">
                         <a @click="selectPersonHandler" class="select-person-title">请选择委员</a>
                     </div>
                     <div class="select-person" v-show="authVal == 2 && showPersonal">
@@ -49,7 +49,7 @@
                                 :value="item.value">
                             </el-option>
                         </el-select>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="news-pub-action">
                     <div class="left-action">
@@ -130,10 +130,10 @@ export default {
           label: "公开",
           value: "1"
         },
-        {
-          label: "指定人员可见",
-          value: "2"
-        }
+        // {
+        //   label: "指定人员可见",
+        //   value: "2"
+        // }
       ],
       authVal: "",
       dialogPreview: false,
@@ -145,28 +145,24 @@ export default {
     };
   },
   created() {
-    this.personOptions = [
-      {label:"人",value:1},
-      {label:"人2",value:2},
-    ]
-    PageData.personList().then(d=>{
-        if(d.resultCode == 200) {
-            this.personOptions = [
-                {label:"人",value:1},
-                {label:"人2",value:2},
-            ]
-        } else {
-            this.$message({
-                type: "waring",
-                message: "获取人员失败"
-            });
-        }
-    }).catch(()=>{
-        this.$message({
-            type: "waring",
-            message: "获取人员失败"
-        });
-    })
+    // PageData.personList().then(d=>{
+    //     if(d.resultCode == 200) {
+    //         this.personOptions = [
+    //             {label:"人",value:1},
+    //             {label:"人2",value:2},
+    //         ]
+    //     } else {
+    //         this.$message({
+    //             type: "waring",
+    //             message: "获取人员失败"
+    //         });
+    //     }
+    // }).catch(()=>{
+    //     this.$message({
+    //         type: "waring",
+    //         message: "获取人员失败"
+    //     });
+    // })
   },
   methods: {
     onEditorBlur(quill) {},

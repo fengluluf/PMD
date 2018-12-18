@@ -25,7 +25,7 @@ export default {
             netAjax.singleRequest({
                 url: baseUrl + '/business-server/activity/publishedList',
                 data:data,
-                type: 'POST',
+                type: 'GET',
                 success: function (d) {
                     def.resolve(d)
                 },
@@ -52,7 +52,7 @@ export default {
             netAjax.singleRequest({
                 url: baseUrl + '/business-server/activity/applyedList',
                 data:data,
-                type: 'POST',
+                type: 'GET',
                 success: function (d) {
                     def.resolve(d)
                 },

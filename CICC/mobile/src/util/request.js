@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from '../main.js'
 import {API_PREFIX} from '@/api/apis'
-
+const qs = require('qs');
 
 // 请求拦截
 axios.interceptors.request.use(res => {
@@ -12,7 +12,9 @@ axios.interceptors.request.use(res => {
 
 // 响应拦截
 axios.interceptors.response.use(res => {
-
+    if(res.data.resultCode !==200){
+        Vue.Toast(res.data.resultMessage)
+    }
     return res
 },error =>{
     let res = error.response 
@@ -34,21 +36,26 @@ function createRequestConfig(api,{method, headers,patterns, params, data}){
             url = url.replace(`{${i}}`,patterns[i])
         }
     }
+
     // 添加userId
     let userId = localStorage.getItem("userIdPMD");
     if(data){
         data.userId = userId;
     }
-
-    if(params){
+    if(params&&header["Content-Type"] !== 'application/x-www-form-urlencoded'){
         params.userId = userId;
     }
     
+    // 处理application/x-www-form-urlencoded 请求
+    if(data&&header["Content-Type"] == 'application/x-www-form-urlencoded'){  // application/x-www-form-urlencoded
+        data = qs.stringify(data)
+    }
+
     return  axios.request({
         url: API_PREFIX +  url,
         method: methods.toLowerCase(),
         params: params, 
-        data: data,
+        data:data,
         headers: header,
         timeout:10000,
     });

@@ -7,15 +7,15 @@
                 </div>
                 <div class="activity-con">
                     <div class="title">{{item.title}}</div>
-                    <div class="place" v-if="item.status==1">
+                    <div class="place" v-if="item.showStatus!=6">
                         {{item.address}}
                     </div>
-                    <div class="time" v-if="item.status==1">
+                    <div class="time" v-if="item.showStatus!=6">
                         {{item.beginDate}}
                     </div>
                 </div>
                 <div class="activity-status">
-                    <div :class="[item.status==1?'green':'red','statusDisplay']">{{item.status==1?'报名中':'已结束'}}</div>
+                    <div :class="[item.showStatus!=6?'green':'red','statusDisplay']">{{item.showStatus!=6?'报名中':'已结束'}}</div>
                 </div>
             </div>
         </div>

@@ -16,13 +16,10 @@ export default {
     publishComment(obj){ // 发表评论
         return request(commentsUrl.COMMENTS_iNSERT,{
             method:'post',
-            data:obj
-        })
-    },
-    deleteComment(obj){ // 删除评论
-        return request(commentsUrl.COMMENTS_DELETE,{
-            method:'post',
-            params:obj
+            data:obj,
+            headers:{
+                "Content-Type":'application/x-www-form-urlencoded',
+            }
         })
     },
 }

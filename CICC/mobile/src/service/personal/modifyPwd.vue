@@ -76,9 +76,9 @@ export default {
         confirm(){
             var _this = this;
             var data = {
-                userId:localStorage.getItem("userIdPWD"),
+                userId:localStorage.getItem("userIdPMD"),
                 oldPassword:this.oldPwd,
-                newPassWord:this.newPwdOnce
+                newPassword:this.newPwdOnce
             }
             if(this.checkOldPwd()&&this.checknewOnce()&&this.checknewSec()){
                 if(this.newPwdOnce==this.newPwdSec){

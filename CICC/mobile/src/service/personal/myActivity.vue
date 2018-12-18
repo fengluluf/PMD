@@ -39,6 +39,12 @@
                                     </div>
                                     <div class="activity-con">
                                         <div class="title">{{item.title}}</div>
+                                        <div class="place">
+                                            {{item.address}}
+                                        </div>
+                                        <div class="time">
+                                            {{item.beginDate}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -112,8 +118,9 @@ export default {
     data() {
         return {
             title:"我的活动",
-            listDataPro:[{},{},{},{},{}],
-            listDataOver:[{},{},{},{},{}],
+            listData:[],
+            listDataPro:[{},{},{},{}],
+            listDataOver:[{},{},{},{}],
             homescrollTops:0,
             pager: {
                 pageNo: 1,
@@ -127,11 +134,19 @@ export default {
     },
     watch: {
         selected(val){
+            this.listDataPro = [];
+            this.listDataOver = [];
             this.getDataList();
-        }
+        },
+        $route(to, from){
+            const fromDepth = from.name
+            if(fromDepth == "activityRelease"||fromDepth == "personal"){
+                this.getDataList();
+            }
+        },
     },
     created() {
-        this.getDataList();
+        // this.getDataList();
     },
     methods: {
         //获取列表上数据
@@ -143,11 +158,11 @@ export default {
             };
             var _this = this;
             if(this.selected == 1){
-                pageData.getPublishedList(data).then((d) => {
+                pageData.getApplyedList(data).then((d) => {
                     _this.getResult(d);
                 })
             }else{
-                pageData.getApplyedList(data).then((d) => {
+                pageData.getPublishedList(data).then((d) => {
                     _this.getResult(d);
                 })
             }
@@ -155,23 +170,24 @@ export default {
         getResult(d){
             if(d.resultCode == 200){                    
                 if(d.resultJson.pageNum === 1) {
-                    // this.listData = d.resultJson.pageContent;
+                    this.listDataPro = [];
+                    this.listDataOver = [];
+                    this.listData = d.resultJson.pageContent
                     for(var i=0;i<d.resultJson.pageContent.length;i++){
-                        if(d.resultJson.pageContent[i].status == 1){
-                            this.listDataPro.push(d.resultJson.pageContent[i])
-                        }else{
+                        if(d.resultJson.pageContent[i].showStatus == 6){
                             this.listDataOver.push(d.resultJson.pageContent[i])
+                        }else{
+                            this.listDataPro.push(d.resultJson.pageContent[i])
                         }
                     }
                 } else {
                     for(var i=0;i<d.resultJson.pageContent.length;i++){
                         if(JSON.stringify(this.listData).indexOf(JSON.stringify(d.resultJson.pageContent[i])) == -1){
-                            // this.listData = this.listData.concat(d.resultJson.pageContent);
                             for(var j=0;j<d.resultJson.pageContent.length;j++){
-                                if(d.resultJson.pageContent[j].status == 1){
-                                    this.listDataPro = this.listDataPro.concat(d.resultJson.pageContent[j])
+                                if(d.resultJson.pageContent[j].showStatus == 6){
+                                    this.listDataOver = this.listDataOver.concat(d.resultJson.pageContent[j])   
                                 }else{
-                                    this.listDataOver = this.listDataOver.concat(d.resultJson.pageContent[j])
+                                    this.listDataPro = this.listDataPro.concat(d.resultJson.pageContent[j])
                                 }
                             }
                         }
@@ -209,11 +225,12 @@ export default {
         },
         //获取滚动的高度
         getscrollTops(){
-            this.homescrollTops=this.$children[0].$refs.main.scrollTop;
+            this.homescrollTops = this.$children[0].$refs.main.scrollTop;
+            console.log(this.$parent.scrollTop)
         },
         //进入活动详情页
         activityItemDetail(item){
-            this.$router.push({path:'/activityDetail',query:{id:item.id,itemUserId:item.activityUser.userId}});
+            this.$router.push({path:'/activityDetail',query:{id:item.id,itemUserId:item.editorId}});
             this.getscrollTops();
         },
         //发布活动
@@ -226,8 +243,8 @@ export default {
 </script>
 <style scoped lang="less">
 .myActivity{
-    height: 100%;
-    background-color: #f5f7f8;
+    // height: 100%;
+    // background-color: #f5f7f8;
 }
 .myActivity .header{
     background-color: #f5f7f8;
@@ -239,6 +256,7 @@ export default {
     top:0
 }
 .myActivity .main{
+    background-color: #f5f7f8;
     .mint-navbar{
         width: 100%;
         top:80px;
@@ -252,7 +270,7 @@ export default {
         z-index: 999;
     }
     .mint-tab-container-item{
-        margin-top:160px;
+        // margin-top:160px;
     }
     .over{
         margin-top:-20px;

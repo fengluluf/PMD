@@ -22,7 +22,7 @@ export default {
         }else {
             var def = $.Deferred();
             netAjax.singleRequest({
-                url: baseUrl + '/business-server/user/updatePassword',
+                url: baseUrl + '/user-server/user/updatePassword',
                 data:data,
                 type: 'POST',
                 success: function (d) {

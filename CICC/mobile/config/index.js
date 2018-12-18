@@ -4,7 +4,8 @@
 
 const path = require('path')
 
-const baseUrl = 'http://10.243.10.252:8040'
+// const baseUrl = 'http://10.243.10.252:8040'
+const baseUrl = 'http://10.243.9.95:8040'  //刘志鹏
 
 module.exports = {
   dev: {

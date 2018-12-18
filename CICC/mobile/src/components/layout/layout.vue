@@ -79,7 +79,7 @@ export default {
 .mainBox {
     overflow: scroll;
     width:100%;
-    margin-top:2px;
+    margin-top:160px;
     -webkit-overflow-scrolling: touch;
 }
 .mint-loadmore{

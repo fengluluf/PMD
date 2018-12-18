@@ -9,7 +9,7 @@ const state = {
 const actions = {
       commentsListReq({commit},data){ // 评论列表请求
        return commentsApi.commentList(data).then(res=>{
-           commit('commentsListState',res.data)
+           commit('commentsListState',res.data.resultJson)
            return res.data
         })
       },

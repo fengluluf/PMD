@@ -23,7 +23,7 @@ export default {
         }else {
             var def = $.Deferred();
             netAjax.singleRequest({
-                url: baseUrl + '/business-server/user/one',
+                url: baseUrl + '/user-server/user/one',
                 data:data,
                 type: 'GET',
                 success: function (d) {
@@ -49,7 +49,7 @@ export default {
         }else {
             var def = $.Deferred();
             netAjax.singleRequest({
-                url: baseUrl + '/business-server/user/update',
+                url: baseUrl + '/user-server/user/update',
                 data:data,
                 type: 'POST',
                 success: function (d) {

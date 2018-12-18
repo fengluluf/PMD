@@ -1,12 +1,12 @@
 <template>
    <div class="likeComment">
-        <div :class="likeData.status == 1?`${like} zan`:'zan'" @click="newlikeRequest">
+        <div :class="likeData.isConcern == 1?`like zan`:'zan'" @click="newlikeRequest">
             <i :class="likeActive?'iconfont icon-dianzan1 animateLike':'iconfont icon-dianzan1 noActive'" ></i>
             <span :class="likeActive?'active':'noActive'">{{likeData.concernCount}}</span>
         </div>
         <div class="message" @click="commentClick">
             <i class="iconfont icon-liuyan"></i>
-            <span>11</span>
+            <span>{{likeData.commentCount}}</span>
         </div>
     </div>
 </template>
@@ -14,35 +14,57 @@
 
 <script>
 import {mapState,mapActions} from 'vuex'
-
 export default {
     data(){
         return {
            likeObj:{}, // 新闻点赞存储
-           likeActive:''
+           likeActive:'',
         }
     },
     props:['likeData'],
     created(){
-     
     },
     methods:{
         ...mapActions('news/news',['newLikeReq']),
         commentClick(){
-           this.$emit("commentBack")
+           this.$emit("commentBack",this.likeData)
         },
-        newlikeRequest(){//点赞
+        newlikeRequest(){  //点赞
+          if(this.likeData.status !==2){
+            return
+          }
+
           if(this.likeActive === ''){ // 首次点击点赞
-             if(this.likeData.status == 1){ // 点赞状态
+             if(this.likeData.isConcern == 1){ // 点赞状态
                 this.likeActive = false;
+                this.likeData.isConcern = 0
+
+                if(this.likeData.concernCount>0){
+                  this.likeData.concernCount -= 1
+                }
              }else{
                 this.likeActive = true;
+                this.likeData.isConcern = 1;
+
+                this.likeData.concernCount += 1
              }
           }else{
              this.likeActive = !this.likeActive;
+             if(this.likeActive){
+                  this.likeData.isConcern = 1
+                  this.likeData.concernCount += 1
+             }else{
+                  this.likeData.isConcern = 0
+                  if(this.likeData.concernCount>0){
+                     this.likeData.concernCount -= 1
+                  }
+             }
           }
-          
-        //   this.newLikeReq()  // 点赞请求
+           
+           let data = {
+               id:this.likeData.id,
+           }
+           this.newLikeReq(data).then(res=>{}) 
         },
     }
 }
@@ -71,9 +93,9 @@ export default {
         .active{
             color: #e83f48;
         }
-        .noActive{
-            color: rgb(139, 139, 139);
-        }
+        // .noActive{
+        //     color: rgb(139, 139, 139);
+        // }
     }
     .like{
         color: #e83f48;

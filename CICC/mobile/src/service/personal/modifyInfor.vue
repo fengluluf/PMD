@@ -67,7 +67,6 @@ export default {
             selectedSex:'',
             userMsg:{
                 birthday:'',
-                birthdayStr:'',
                 headImg:'',
                 nickName:'',
                 sex:'',
@@ -99,10 +98,16 @@ export default {
     methods: {
         //获取用户信息
         getUserMsg(){
-            var data = 'userId:'+localStorage.getItem('userIdPMD');
-            pageData.getUserMsg(data).then(function (d) {
+            var data = 'userId='+localStorage.getItem('userIdPMD');
+            pageData.getUserMsg(data).then(d => {
                 if(d.resultCode == 200) {
                     this.userMsg = d.resultJson;
+                    this.userMsg.birthday = this.userMsg.birthday.substring(0,10)
+                    if(d.resultJson.sex==0){
+                        this.selectedSex = "男"
+                    }else{
+                        this.selectedSex = "女"
+                    }
                 }else{
                     Toast(d.resultMessage);
                 }
@@ -153,9 +158,9 @@ export default {
             var data = {
                 nickName:this.userMsg.nickName,
                 sex:this.userMsg.sex,
-                birthdayStr:this.userMsg.birthdayStr,
+                birthdayStr:this.userMsg.birthday,
                 headImg:this.userMsg.headImg,
-                userId:localStorage.getItem('userIdPWD')
+                userId:localStorage.getItem('userIdPMD')
             }
             pageData.update(data).then(function (d) {
                 if(d.resultCode == 200) {
@@ -186,8 +191,7 @@ export default {
         },
         //时间选择器确定事件
         handleConfirm(){ 
-            this.userMsg.birthdayStr =this.pickerValue 
-            this.userMsg.birthday = base.formatDate(this.pickerValue,'yyyy-MM-dd')
+            this.userMsg.birthday =base.formatDate(this.pickerValue,'yyyy-MM-dd')
         },
     },
     

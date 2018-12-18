@@ -184,10 +184,6 @@ export default {
     box-shadow:0 2px 1px 0px rgba(0,0,0,0.10);/*no*/
     box-sizing: border-box;
 }
-.home .main{
-    /* height:100%; */
-    margin-top:160px;
-}
 .home .main .nothing{
     padding-top:60px;
     width:100%;

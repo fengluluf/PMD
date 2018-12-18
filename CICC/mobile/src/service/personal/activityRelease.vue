@@ -43,10 +43,7 @@
                                 v-model="pickerEndValue"
                                 @confirm="handleEnd"
                                 :startDate="beginDate"
-                                :endDate="endDate"
-                                year-format="{value} 年"
-                                month-format="{value} 月"
-                                date-format="{value} 日">
+                                :endDate="endDate">
                             </mt-datetime-picker>
                             <span class="iconfont icon-buoumaotubiao52 bfRight"></span>
                             <span>{{selectEnd}}</span>
@@ -61,7 +58,7 @@
                     <div class="activity-detail-content">
                         <div class="detTitle">活动详情</div>
                         <div class="detCon">
-                            <textarea class="activityDetail" rows="10"></textarea>
+                            <textarea class="activityDetail" rows="10" v-model="activityData.content"></textarea>
                         </div>
                     </div>
                 </div>
@@ -86,12 +83,19 @@ export default {
             selectBegin:'',
             selectEnd:'',
             activityData:{
-                banner:'',
+                banner:'http://118.144.88.221/group1/M00/00/00/dpBY3VwXaC6AIPCgAABHTbE9hIw001.gif',
                 title:'',
                 beginTime:'',
                 endTime:'',
                 address:'',
                 content:''
+            },
+            errorMsg:{
+                title:'活动标题不可为空',
+                beginTime:'活动开始时间不可为空',
+                endTime:'活动结束时间不可为空',
+                address:'活动地址不可为空',
+                content:'活动内容不可为空'
             },
             showBegin:true,  //是否显示时间选择器
             showEnd:true,  //是否显示时间选择器
@@ -128,20 +132,28 @@ export default {
         //时间选择器确定事件
         handleBegin(){ 
             this.selectBegin = base.formatDate(this.pickerBeginValue,'yyyy-MM-dd hh:mm')
-            this.activityData.beginTime = this.pickerBeginValue
+            this.activityData.beginTime = this.pickerBeginValue.getTime();
         },
         handleEnd(){ 
             this.selectEnd = base.formatDate(this.pickerEndValue,'yyyy-MM-dd hh:mm')
-            this.activityData.endTime = this.pickerEndValue;
+            this.activityData.endTime = this.pickerEndValue.getTime();
         },
         //发布
         release(){
             var data = {};
+            for(var key in this.activityData){
+                if(this.activityData[key]){
+                    this.errorMsg[key] == "";
+                }else{
+                    Toast(this.errorMsg[key]);
+                    return;
+                }
+            }
             data = this.activityData;
             data.userId = localStorage.getItem('userIdPMD');
             pageData.insert(data).then(function (d) {
                 if(d.resultCode == 200) {
-                    this.userMsg = d.resultJson;
+                    Toast("发布成功");
                 }else{
                     Toast(d.resultMessage);
                 }

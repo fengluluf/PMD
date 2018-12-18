@@ -48,7 +48,7 @@ export default {
         }else {
             var def = $.Deferred();
             netAjax.singleRequest({
-                url: baseUrl + '/business-server/user/logout',
+                url: baseUrl + '/user-server/user/logout',
                 data:data,
                 type: 'POST',
                 success: function (d) {

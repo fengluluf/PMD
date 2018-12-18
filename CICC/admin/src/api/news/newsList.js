@@ -75,7 +75,7 @@ export default {
         }else {
             var def = $.Deferred();
             netAjax.singleRequest({
-                url: baseUrl + '/business-server/newsComment/updateIsTopStatus',
+                url: baseUrl + '/business-server/news/updateIsTopStatus',
                 data:data,
                 type: 'POST',
                 success: function (d) {

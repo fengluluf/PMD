@@ -35,7 +35,13 @@ export default {
     methods: {
         //保存修改信息
         saveMsg(){
-            var data = this.userMsg;
+            var data = {
+                nickName:this.userMsg.nickName,
+                sex:this.userMsg.sex,
+                birthdayStr:this.userMsg.birthday,
+                headImg:this.userMsg.headImg,
+                userId:localStorage.getItem('userIdPMD')
+            }
             data.signature = this.signature;
             MessageBox.confirm('确认修改?').then(action => {
                 pageData.modifySign(data).then(function (d) {

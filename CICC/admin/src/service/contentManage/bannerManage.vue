@@ -67,6 +67,7 @@
                             ref="upload"
                             class="upload-wrapper"
                             action="http://118.144.88.221:8040/uploadImageServlet/"
+                            :http-request="bannerUpload"
                             :on-success="handleBannerSuccess"
                             :on-preview="handlePreview"
                             :on-remove="handleRemove"
@@ -237,12 +238,14 @@ export default {
     getTableData() {
       var _this = this;
       var data = {
-        userId: sessionStorage.getItem("userId"),
+        // userId: sessionStorage.getItem("userId"),
+        userId: 2,
         search: "",
         pageNo: this.pager.currentPage,
         pageSize: this.pager.pageSize
       };
       PageData.getList(data).then(function(d) {
+        console.log("d",d);
         if (d.resultCode == 200) {
           _this.tableData = d.resultJson.pageContent;
           _this.pager.pageNo = d.resultJson.pageNum;
@@ -281,7 +284,8 @@ export default {
         var _this = this;
         var data = "id=" + row.id;
         var data = {
-            userId: sessionStorage.getItem("userId"),
+            // userId: sessionStorage.getItem("userId"),
+            userId: 2,
             id: row.id
         };
         this.$confirm("请确认是否删除信息?", "友情提示", {
@@ -326,20 +330,20 @@ export default {
       data.status = 2;
       PageData.updateItem(data).then(d => {
           if (d.resultCode == 200) {
-              _this.$message({
+              this.$message({
                   message: "banner创建成功",
                   type: "success"
               });
-          _this.getTableData();
+              this.getTableData();
           } else {
-              _this.$message({
+              this.$message({
                   type: "warning",
                   message: "banner创建失败，请稍后重试。"
                   // message: d.resultMessage
               });
           }
       }).catch(()=>{
-          _this.$message({
+          this.$message({
               type: "warning",
               message: "banner创建失败，请稍后重试。"
           });
@@ -395,6 +399,43 @@ export default {
     },
     submitUpload() {
       this.$refs.upload.submit();
+    },
+    bannerUpload(content){
+      console.log("nt",content.file);
+      console.log("content",content);
+      var fd = new FormData();
+      var img = content.file
+      if(img){
+          fd.append("userId", sessionStorage.getItem("userId"));
+          fd.append("upfile", img);
+      }else{
+          return;
+      }
+      $.ajax({
+          url: content.action,
+          type: "POST",
+          processData: false,//不处理发送的数据，因为data值是FormData对象，不需要对数据做处理  
+          contentType: false,//不设置Content-type请求头  
+          data: fd,
+          success: function(d) {
+              var d = JSON.parse(d);
+              if(d.resultCode == 200){
+                this.banner.imageUrl = d.resultJson[0];
+                  // _this.activityData.actImg = d.resultJson[0]
+              }else{
+                  this.$message({
+                      type: "warning",
+                      message: d.resultMessage
+                  });
+              }
+          },
+          error:function(err){
+              this.$message({
+                  type: "warning",
+                  message: '网络错误'
+              });
+          }
+      });
     },
     updateItemHandler(row,idx) {
       this.modifyBanner = row;

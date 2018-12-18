@@ -3,14 +3,7 @@
         <div class="headerWrap">
            <Header1 :title="title"></Header1>
         </div>
-         <van-list
-            v-model="loading"
-            :finished="finished"
-            finished-text="没有更多了"
-            :immediate-check="false"
-            :offset="50"
-            @load="onLoad"
-            >
+        
                 <div class="detailsWrap">
                 <h3 class="title">{{singleNewData.title}}</h3>
                 <div class="userHeader">
@@ -22,14 +15,20 @@
                         <div class="time">{{singleNewData.createDate}}</div>
                     </div>
                 </div>
+
                 <!-- 新闻内容 -->
-                <div class="articleContent" v-html="singleNewData.content">
-                    
-                </div>
                 </div>
                 <div class="articleComments">
-                    <div class="title" id="allComment">全部评论{{commentList.length}}</div>
+                    <div class="title" id="allComment" ref="comment">全部评论 ({{commentsListData.count}})</div>
                     <div  class="commentList">
+                         <van-list
+                            v-model="loading"
+                            :finished="finished"
+                            finished-text="没有更多了"
+                            :immediate-check="false"
+                            :offset="50"
+                            @load="listUpload"
+                        >
                         <div v-if="commentList.length" class="commentItem" v-for="(item,index) in commentList" :key="index">
                                 <div class="userHeader">
                                     <div class="portrait">
@@ -41,16 +40,17 @@
                                     </div>
                                 </div>
                                 <div class="commentContent">
-                                    <p class="mainComment">太棒了，以后就这么做一定好吃！</p>
+                                    <p class="mainComment">{{item.content}}</p>
                                 </div>
                         </div>
-                        <div v-if="!commentList.length" class="noComment">
+                       </van-list>    
+
+                        <!-- <div v-if="!commentList.length" class="noComment">
                             暂无评论
-                        </div>
+                        </div> -->
                     </div>
                 </div>
-           </van-list>    
-        <div class="btnWrap">
+        <div class="btnWrap" v-show="singleNewData.status == 2">
            <div class="btnCenter">
                 <ul class="btnUl" :id="isFocus?'focusClass':''">
                     <li class="inpComment">
@@ -58,7 +58,7 @@
                         <textarea @focus="commentFocusBlur(true)" 
                                   @blur="commentFocusBlur(false)" 
                                   type="textarea" 
-                                  :rows="isFocus?5:1" 
+                                  :rows="isFocus?4:1" 
                                   maxlength="150" 
                                   placeholder="写下你的评论"
                                   v-model="commentText">
@@ -118,7 +118,7 @@ export default {
     mounted () {
         // 锚点定位
        if(this.query.isComment){
-           this.$refs.jumpA.click()
+         this.callbackComment()
        }
     },
     methods: {
@@ -129,10 +129,7 @@ export default {
                 'publishCommentReq',
                 'deleteCommentReq',
         ]),
-        onLoad() {
-            this.loading = true;
-            this.finished = true;
-            console.log("加载触发")
+        listUpload() {
             this.commentsListRequest()
         },
         singleNewRequest(){ // 新闻详情请求
@@ -140,10 +137,11 @@ export default {
             data.id = this.query.id
             this.singleNewReq(data).then(res=>{
                 let result = res.resultJson
-                this.likeObj.status = result.isConcern
+                this.likeObj.status = result.status
                 this.likeObj.id = result.id
                 this.likeObj.concernCount = result.concernCount
-                // this.likeObj.commentSum = 
+                this.likeObj.commentCount = result.commentCount
+                this.likeObj.isConcern = result.isConcern
                
             })
         },
@@ -153,15 +151,20 @@ export default {
         commentsListRequest(){ // 获取评论列表
             this.commentListReqData.newsId = this.query.id
             this.commentsListReq(this.commentListReqData).then(res=>{
+                this.loading = false;
+
                 if(res.resultCode === 200){
+                    if(!res.resultJson.pageContent.length){
+                       
+                       this.finished = true;
+                       return;
+                    }
                     this.commentList = [...this.commentList,...res.resultJson.pageContent]
-                    this.loading = false;
-                    this.finished = false;
                     this.commentListReqData.pageNo = this.commentListReqData.pageNo + 1;
                 }else{
                     this.Toast(res.resultMessage)
                 }
-               
+
 
             })
         },
@@ -176,14 +179,21 @@ export default {
                newsId:this.singleNewData.id,
                content:text
            }
-           this.publishCommentReq().then(res=>{
+           this.publishCommentReq(obj).then(res=>{
                this.Toast("评论成功")
                this.commentText ="";
-               this.$refs.jumpA.click()
+               
+               // 初始化评论列表
+               this.commentListReqData.pageNo = 1;
+               this.commentList = []
+               this.finished = false;
+               this.commentsListRequest()
+               this.callbackComment()
            })
         },
-        callbackComment(){ // 评论按钮回调
-             this.$refs.jumpA.click()
+        callbackComment(){ // 定位到全部评论
+             let comEl = this.$refs.comment
+             document.scrollY = comEl.offsetTop;
         }
        
     },
@@ -200,6 +210,9 @@ export default {
         padding:0;
         margin:0;
         box-sizing: border-box;
+    }
+    .van-list{
+        padding-bottom:90px;
     }
     .headerWrap{
         position: fixed;
@@ -286,7 +299,6 @@ export default {
     .articleComments{
         margin-top:2px;
         background:#fff;
-        padding-bottom:90px;
         .title{
             padding:30px 20px 10px;
             font-size:32px;
@@ -390,25 +402,6 @@ export default {
                         resize: none;
                     }
                 }
-                // .comments{
-                //     width:15%;
-                //     a{
-                //         display: block;
-                //         display: flex;
-                //         justify-content: center;
-                //         align-items: center;
-                //         color:#666666;
-                //     }
-                //     i{
-                //         font-size:40px;
-                //     }
-                // }
-                // .like{
-                //     width:15%;
-                //     i{
-                //         font-size:38px;
-                //     }
-                // }
                
             }
             .send{
@@ -433,10 +426,6 @@ export default {
                     width:100%;
                 }
             }
-            // .comments,.like{
-            //     display:none;
-            // }
-            
         }
     }
 

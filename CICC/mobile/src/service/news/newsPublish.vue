@@ -9,7 +9,7 @@
         </div>
         <div slot="main" ref="main" class="newsPublish-main">
             <div class="newsTitle">
-                <input placeholder="请输入标题" type="text" class="newsInput" v-model="title">
+                <input placeholder="请输入标题" type="text" class="newsInput" v-model="newReqData.title">
             </div>
             <div class="newsDetail">
                 <!-- <textarea placeholder="请输入正文......" class="newsInput" v-model="content"></textarea> -->
@@ -58,16 +58,18 @@ export default {
                   return false;
             }
 
-            if(this.newReqData.cpntent.replace(/\n/ig,"") === ''){
+            if(this.newReqData.content.replace(/\n/ig,"") === ''){
                   this.Toast('请输入新闻内容')
                   return false;
             }
-            this.newsPublishReq(this.newReqData).then(res=>{
+
+            let obj = {
+                params: JSON.stringify(this.newReqData)
+            }
+            this.newsPublishReq(obj).then(res=>{
                  if(res.resultCode === 200){
                      this.Toast('发布成功')
                      this.$router.push('/home');
-                 }else{
-                     this.Toast(d.resultMessage)
                  }
             })
         },
@@ -90,9 +92,6 @@ export default {
 <style lang="less" scoped>
 .newsPublish{
     overflow: hidden;
-    div,p,ul,li,span,i,input,form{
-        box-sizing: border-box;
-    }
     .newsPublish-header{
         background-color: #f5f7f8;
         z-index:999;
@@ -110,14 +109,17 @@ export default {
         height: 80px;
         line-height: 80px;
         padding:0 10px;
-        border-bottom:1px solid #c8c8c8;/*no*/
+        margin-top:100px;
         input{
             border:none;
             width:100%;
             height:70px;
             outline: none;
-            font-size: 36px;/*px*/
-            font-weight: bold
+            font-size: 34px;/*px*/
+            font-weight: bold;
+            text-indent: 10px;
+            border-bottom:1px solid #d8d8d8;/*no*/
+
         }
         input::-webkit-input-placeholder{
             font-size: 36px;/*px*/
@@ -132,8 +134,10 @@ export default {
             padding:20px;
             overflow-y:scroll;
             overflow-scrolling: touch;
-            border:1px solid #eee;
+            border:1px solid rgb(214, 214, 214);
             outline: none;
+            background:#fff;
+
             #tip{
                color:rgb(143, 143, 143);
             }

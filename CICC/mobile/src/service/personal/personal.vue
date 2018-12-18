@@ -70,10 +70,11 @@ export default {
     methods: {
         //获取用户信息
         getUserMsg(){
-            var data = 'userId:'+localStorage.getItem('userIdPMD');
+            var _this = this;
+            var data = 'userId='+localStorage.getItem('userIdPMD');
             pageData.getUserMsg(data).then(function (d) {
                 if(d.resultCode == 200) {
-                    this.userMsg = d.resultJson;
+                    _this.userMsg = d.resultJson;
                 }else{
                     Toast(d.resultMessage);
                 }

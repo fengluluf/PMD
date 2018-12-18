@@ -4,9 +4,10 @@ const API_PREFIX = '/api'
 // 新闻接口
 const newsUrl = {
     NEWS_LIST:'/business-server/news/list', // 新闻列表
+    EDITOR_NEWS_LIST:'/business-server/news/listByEditor', // 编辑这发布新闻列表
     NEWS_INSERT:'/business-server/news/insert', // 发布新闻
     NEWS_ONE:'/business-server/news/one', //单条新闻查询
-    NEWS_SLIDER:'/business-server/showSlide/list', // 新闻轮播图
+    NEWS_SLIDER:'/business-server/slideShow/list', // 新闻轮播图
     NEWS_LIKE:'/business-server/news/addOrCancelNewsConcern', // 点赞接口
 }
 

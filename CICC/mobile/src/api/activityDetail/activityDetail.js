@@ -89,5 +89,31 @@ export default {
             return def;
         }
     },
-
+    //报名
+    getApplyUser: function (data) {
+        if(develop) {
+            var def = $.Deferred();
+            setTimeout(function () {
+                var d = {
+                    resultCode: 200
+                }
+                def.resolve(d);
+            }, 100);
+            return def;
+        }else {
+            var def = $.Deferred();
+            netAjax.singleRequest({
+                url: baseUrl + '/business-server/activity/selectApplyUser',
+                data:data,
+                type: 'GET',
+                success: function (d) {
+                    def.resolve(d)
+                },
+                error: function (d) {
+                    def.resolve(d)
+                }
+            })
+            return def;
+        }
+    },
 }

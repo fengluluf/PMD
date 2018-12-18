@@ -47,10 +47,11 @@ export default {
         //退出登录
         signOut(){
             var _this = this;
-            var data = "userId:" + localStorage.getItem("userIdPMD");
+            var data = "userId=" + localStorage.getItem("userIdPMD");
             pageData.signOut(data).then(function (d) {
                 if(d.resultCode == 200) {
-                    appnest.navigation.closeWindow();
+                    _this.$router.push('/')
+                    // appnest.navigation.closeWindow();
                     localStorage.removeItem("userIdPMD");
                     localStorage.removeItem("userNamePMD");
                 }

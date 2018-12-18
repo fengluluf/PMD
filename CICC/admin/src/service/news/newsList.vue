@@ -45,6 +45,7 @@
                     </template>   
                 </el-table-column>
                 <el-table-column  align="center" prop="editorName" label="发布者" width="180"></el-table-column>
+                <el-table-column  align="center" label="状态" prop="statusStr" width="180"></el-table-column>
                 <el-table-column  align="center" prop="content" label="内容" width="100">
                     <template slot-scope="scope">
                         <el-button type="text" size="small" @click="newsDetailHandler(scope.row)">详情</el-button>
@@ -52,10 +53,10 @@
                 </el-table-column>
                 <el-table-column  align="center"  width="180" label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" size="small" @click="isTop(scope.row,scope.$index,0)" v-if="scope.row.istop == 0">置顶</el-button>
+                        <el-button type="text" size="small" @click="isTop(scope.row,scope.$index,0)" v-if="scope.row.isTop == 0">置顶</el-button>
                         <el-button type="text" size="small" @click="isTop(scope.row,scope.$index)" v-else>取消置顶</el-button>
-                        <el-button type="text" size="small" @click="newsReview(scope.row,scope.$index)">审核</el-button>
-                        <el-button type="text" size="small" @click="deleteItemHandler(scope.row)">删除</el-button>
+                        <el-button type="text" size="small" @click="newsReview(scope.row,scope.$index)" :disabled="scope.row.status !== 1">审核</el-button>
+                        <el-button type="text" size="small" @click="deleteItemHandler(scope.row)" class="text-danger">删除</el-button>
                     </template>   
                 </el-table-column>
             </el-table>
@@ -157,13 +158,21 @@ export default {
           value: -1
         },
         {
-          label: "未审核",
+          label: "删除",
           value: 0
         },
         {
-          label: "审核",
+          label: "未审核",
           value: 1
-        }
+        },
+        {
+          label: "审核通过",
+          value: 2
+        },
+        {
+          label: "审核未通过",
+          value: 3
+        },
       ],
       review: {
           pass: '',
@@ -186,7 +195,8 @@ export default {
     getTableData() {
       var _this = this;
       var data = {
-        userId: sessionStorage.getItem("userId"),
+        // userId: sessionStorage.getItem("userId"),
+        userId: 2,
         search: "",
         pageNo: this.pager.currentPage,
         pageSize: this.pager.pageSize
@@ -197,6 +207,7 @@ export default {
           _this.pager.pageNo = d.resultJson.pageNum;
           _this.pager.totalPage = d.resultJson.totalPage;
           _this.pager.total = d.resultJson.count;
+          _this.getStatusStr();
         } else {
           _this.$message({
             type: "warning",
@@ -205,14 +216,23 @@ export default {
         }
       });
     },
+    getStatusStr(){
+        this.tableData.map((item)=>{
+            var statusObj = this.statusOptions.find((statusItem)=>{
+                return statusItem.value == item.status
+            })
+            item.statusStr = statusObj && statusObj.label ? statusObj.label : item.status;
+        })
+    },
     //点击搜索
     activitySearchHandler() {
       var _this = this;
       var data = {
+          userId: 2,
         pageNo: this.pager.currentPage,
         pageSize: this.pager.pageSize
       };
-      data.userId = sessionStorage.getItem("userId");
+    //   data.userId = sessionStorage.getItem("userId");
       if (this.searchData.newsDate) {
         data.beginTime = this.searchData.newsDate[0];
         data.endTime = this.searchData.newsDate[1];
@@ -223,12 +243,8 @@ export default {
       if (this.searchData.author) {
         data.editorName = this.searchData.author;
       }
-      if (this.searchData.status) {
-          if(this.searchData.status == '-1') {
-              data.status = '';
-          } else {
-              data.status = this.searchData.status;
-          }
+      if (this.searchData.status || this.searchData.status == 0) {
+        data.status = this.searchData.status;
       }
 
       PageData.listInfo(data).then(d => {
@@ -237,6 +253,7 @@ export default {
           _this.pager.pageNo = d.resultJson.pageNum;
           _this.pager.totalPage = d.resultJson.totalPage;
           _this.pager.total = d.resultJson.count;
+          _this.getStatusStr();
         } else {
           _this.$message({
             type: "warning",
@@ -270,7 +287,8 @@ export default {
         var _this = this;
         var data = "ids=" + row.id;
         var data = {
-            userId: sessionStorage.getItem("userId"),
+            userId: 2,
+            // userId: sessionStorage.getItem("userId"),
             id: row.id
         };
         this.$confirm("请确认是否删除信息?", "友情提示", {
@@ -314,19 +332,21 @@ export default {
     isTop(row, top) {
       //   调用接口，置顶请求完成后，重新请求当页数据
     //   this.tableData[idx].istop = 1;
-      var data = {};
+      var data = {
+          userId: 2,
+      };
       data.id = row.id;
-      data.userId =  sessionStorage.getItem("userId");
-      if(top == 0) {
-          data.top = 1
-      } else {
-          data.top = 0
-      }      
+    //   data.userId =  sessionStorage.getItem("userId");
+    //   if(top == 0) {
+    //       data.top = 1
+    //   } else {
+    //       data.top = 0
+    //   }      
       PageData.newsTop(data).then(d => {
             if (d.resultCode == 200) {
-                _this.getTableData();
+                this.getTableData();
             } else {
-                _this.$message({
+                this.$message({
                     type: "warning",
                     message: "置顶失败，请稍后重试。"
                 });
@@ -336,6 +356,7 @@ export default {
     // 审核提交
     sendReviewData() {
         var data = {};
+        data.userId = 2;
         data.pass = this.review.pass;
         data.cause = this.review.cause;
         
@@ -412,5 +433,8 @@ export default {
 }
 .news-review-dialog .review-title {
     width: 60px;
+}
+.news-list-container .text-danger{
+  color: #F56C6C;
 }
 </style>
