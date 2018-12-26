@@ -1,0 +1,440 @@
+<template>
+    <div class="news-list-container">
+        <div class="news-list-header">
+            <ul>
+                <li>
+                    <span>时间</span>
+                    <el-date-picker
+                        v-model="searchData.newsDate"
+                        size="small"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        format="yyyy 年 MM 月 dd 日"
+                        value-format="timestamp">
+                    </el-date-picker>
+                </li>
+                <li>
+                    <span>标题</span>
+                    <el-input size="small" v-model="searchData.title" placeholder="输入标题关键字"></el-input>
+                </li>
+                <li>
+                    <span>作者</span>
+                    <el-input size="small" v-model="searchData.author" placeholder="请输入作者进行查询"></el-input>
+                </li>
+                <li>
+                    <span>状态查询</span>
+                    <el-select filterable size="small" v-model="searchData.status" placeholder="请选择">
+                        <el-option v-for="(item,index) in statusOptions" :key="index" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                </li>
+                <li>
+                    <el-button type="primary" size="small" @click="activitySearchHandler">搜索</el-button>
+                </li>
+            </ul>
+        </div>
+        <div class="news-list-main">
+            <el-table :data="tableData" border style="width: 100%" size="small">
+                <el-table-column  align="center" type="index" label="序号" width=""></el-table-column>
+                <el-table-column  align="center" prop="id" label="文章ID" width=""></el-table-column>
+                <el-table-column  align="center" prop="title" label="新闻标题" width=""></el-table-column>
+                <el-table-column  align="center" label="发布时间" width="">
+                    <template slot-scope="scope">
+                        {{scope.row.createTime | formatDate}}
+                    </template>   
+                </el-table-column>
+                <el-table-column  align="center" prop="editorName" label="发布者" width="180"></el-table-column>
+                <el-table-column  align="center" label="状态" prop="statusStr" width="180"></el-table-column>
+                <el-table-column  align="center" prop="content" label="内容" width="100">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="newsDetailHandler(scope.row)">详情</el-button>
+                    </template>   
+                </el-table-column>
+                <el-table-column  align="center"  width="180" label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="isTop(scope.row,scope.$index,0)" v-if="scope.row.isTop == 0">置顶</el-button>
+                        <el-button type="text" size="small" @click="isTop(scope.row,scope.$index)" v-else>取消置顶</el-button>
+                        <el-button type="text" size="small" @click="newsReview(scope.row,scope.$index)" :disabled="scope.row.status !== 1">审核</el-button>
+                        <el-button type="text" size="small" @click="deleteItemHandler(scope.row)" class="text-danger">删除</el-button>
+                    </template>   
+                </el-table-column>
+            </el-table>
+        </div>
+        <div class="news-list-footer">
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page.sync="pager.currentPage"
+                :page-size="pager.pageSize"
+                layout="prev, pager, next, jumper"
+                :total="pager.total">
+            </el-pagination>
+        </div>
+        <el-dialog
+            title="详情"
+            :visible.sync="dialogPreview"
+            width="60%"
+            :before-close="handleClose" custom-class="aaaa">
+            <div class="ql-container news-detail-dialog">
+                <div class="newsTitle">
+                    {{newsDetail.title}}
+                </div>
+                <div class="newsAuthor">
+                    作者：{{newsDetail.name}}
+                </div>
+                <div class="newsContent">
+                    {{newsDetail.content}}
+                </div>
+                <div>
+                    权限：{{newsDetail.auth}}
+                </div>
+            </div>
+            <!-- <span slot="footer" class="dialog-footer">
+                <el-button size="small" @click="dialogPreview = false">取 消</el-button>
+                <el-button size="small" type="primary" @click="dialogPreview = false">确 定</el-button>
+            </span> -->
+        </el-dialog>
+        <el-dialog
+            title="审核"
+            :visible.sync="dialogReview"
+            width="500px"
+            :before-close="handleClose">
+            <div class="news-review-dialog">
+                <ul>
+                    <li>
+                        <span class="review-title">审核</span>
+                        <div>
+                            <el-radio v-model="review.pass" label="1">通过</el-radio>
+                            <el-radio v-model="review.pass" label="2">不通过</el-radio>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="review-title">原因</span>
+                        <el-input
+                            type="textarea"
+                            :autosize="{ minRows: 3, maxRows: 6}"
+                            placeholder="请输入内容"
+                            v-model="review.cause">
+                        </el-input>
+                    </li>
+                </ul>
+            </div>
+            <span slot="footer" class="dialog-footer text-center">
+                <el-button size="small" type="primary" @click="sendReviewData()">提交</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+import PageData from "../../api/news/newsList.js"
+import {formatDate} from '../../util/base.js';
+import $ from 'jquery'
+
+export default {
+  name: "newsList",
+  data() {
+    return {
+      searchData: {
+        newsDate: "",
+        title: "",
+        author: "",
+        status: ""
+      },
+      tableData: [],
+      pager: {
+        currentPage: 1,
+        pageSize: 10,
+        total: 0
+      },
+      dialogPreview: false,
+      dialogReview: false,
+      newsDetail: {},
+      topping: "置顶", //是否置顶
+      statusOptions: [
+        {
+          label: "全部",
+          value: -1
+        },
+        {
+          label: "删除",
+          value: 0
+        },
+        {
+          label: "未审核",
+          value: 1
+        },
+        {
+          label: "审核通过",
+          value: 2
+        },
+        {
+          label: "审核未通过",
+          value: 3
+        },
+      ],
+      review: {
+          pass: '',
+          cause:''
+      }
+    };
+  },
+  created() {
+    this.getTableData();
+  },
+  filters: {
+    formatDate(time) {
+        if(time) {
+            var date = new Date(time);
+            return formatDate(date, "yyyy-MM-dd hh:mm");
+        }
+    }
+  },
+  methods: {
+    getTableData() {
+      var _this = this;
+      var data = {
+        // userId: sessionStorage.getItem("userId"),
+        userId: 2,
+        search: "",
+        pageNo: this.pager.currentPage,
+        pageSize: this.pager.pageSize
+      };
+      PageData.getList(data).then(function(d) {
+        if (d.resultCode == 200) {
+          _this.tableData = d.resultJson.pageContent;
+          _this.pager.pageNo = d.resultJson.pageNum;
+          _this.pager.totalPage = d.resultJson.totalPage;
+          _this.pager.total = d.resultJson.count;
+          _this.getStatusStr();
+        } else {
+          _this.$message({
+            type: "warning",
+            message: d.resultMessage
+          });
+        }
+      });
+    },
+    getStatusStr(){
+        this.tableData.map((item)=>{
+            var statusObj = this.statusOptions.find((statusItem)=>{
+                return statusItem.value == item.status
+            })
+            item.statusStr = statusObj && statusObj.label ? statusObj.label : item.status;
+        })
+    },
+    //点击搜索
+    activitySearchHandler() {
+      var _this = this;
+      var data = {
+          userId: 2,
+        pageNo: this.pager.currentPage,
+        pageSize: this.pager.pageSize
+      };
+    //   data.userId = sessionStorage.getItem("userId");
+      if (this.searchData.newsDate) {
+        data.beginTime = this.searchData.newsDate[0];
+        data.endTime = this.searchData.newsDate[1];
+      }
+      if (this.searchData.title) {
+        data.title = this.searchData.title;
+      }
+      if (this.searchData.author) {
+        data.editorName = this.searchData.author;
+      }
+      if (this.searchData.status || this.searchData.status == 0) {
+        data.status = this.searchData.status;
+      }
+
+      PageData.listInfo(data).then(d => {
+        if (d.resultCode == 200) {
+          _this.tableData = d.resultJson.pageContent;
+          _this.pager.pageNo = d.resultJson.pageNum;
+          _this.pager.totalPage = d.resultJson.totalPage;
+          _this.pager.total = d.resultJson.count;
+          _this.getStatusStr();
+        } else {
+          _this.$message({
+            type: "warning",
+            message: d.resultMessage
+          });
+        }
+      });
+    },
+    //pageSize 改变时会触发
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    //当前页变动时触发
+    handleCurrentChange(val) {
+      this.pager.currentPage = val;
+      this.getTableData();
+    },
+    //关闭详情弹窗
+    handleClose() {
+      this.dialogPreview = false;
+      this.dialogReview = false;
+    },
+    //打开详情
+    newsDetailHandler(row) {
+      //   this.content = '<h3>这是标题</h3>';
+      this.newsDetail = row;
+      this.dialogPreview = true;
+    },
+    //点击删除
+    deleteItemHandler(row) {
+        var _this = this;
+        var data = "ids=" + row.id;
+        var data = {
+            userId: 2,
+            // userId: sessionStorage.getItem("userId"),
+            id: row.id
+        };
+        this.$confirm("请确认是否删除信息?", "友情提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+        })
+        .then(() => {
+            PageData.deleteOne(data).then(d => {
+                if (d.resultCode == 200) {
+                    _this.$message({
+                        message: "删除成功",
+                        type: "success"
+                    });
+                _this.getTableData();
+                } else {
+                    _this.$message({
+                        type: "warning",
+                        message: "删除失败，请稍后重试。"
+                        // message: d.resultMessage
+                    });
+                }
+            }).catch(()=>{
+                _this.$message({
+                    type: "warning",
+                    message: "删除失败，请稍后重试。"
+                });
+            });
+        })
+        .catch(() => {});
+    },
+    // 点击审核
+    newsReview(row) {
+        this.dialogReview = true;
+    },
+    //点击搜索
+    newsSearchHandler() {
+      this.getTableData();
+    },
+    //是否置顶
+    isTop(row, top) {
+      //   调用接口，置顶请求完成后，重新请求当页数据
+    //   this.tableData[idx].istop = 1;
+      var data = {
+          userId: 2,
+      };
+      data.id = row.id;
+    //   data.userId =  sessionStorage.getItem("userId");
+    //   if(top == 0) {
+    //       data.top = 1
+    //   } else {
+    //       data.top = 0
+    //   }      
+      PageData.newsTop(data).then(d => {
+            if (d.resultCode == 200) {
+                this.getTableData();
+            } else {
+                this.$message({
+                    type: "warning",
+                    message: "置顶失败，请稍后重试。"
+                });
+            }
+        });
+    },
+    // 审核提交
+    sendReviewData() {
+        var data = {};
+        data.userId = 2;
+        data.pass = this.review.pass;
+        data.cause = this.review.cause;
+        
+        PageData.newsReview(data).then(d => {
+            if (d.resultCode == 200) {
+                this.$message({
+                    type: "success",
+                    message: "审核已提交"
+                },function(){
+                    this.dialogReview = false;
+                    this.getTableData();
+                });
+            } else {
+                this.$message({
+                    type: "warning",
+                    message: "审核失败，请重新提交。"
+                });
+            }
+        });
+    }
+  },
+  computed: {},
+  mounted() {}
+};
+</script>
+
+<style>
+.news-list-container .news-list-header ul {
+  list-style: none;
+  overflow: auto;
+}
+.news-list-container .news-list-main {
+  padding-top: 20px;
+}
+.news-list-container .news-list-footer {
+  text-align: right;
+  padding-top: 30px;
+}
+.news-list-header ul li {
+  float: left;
+  padding-right: 20px;
+}
+.news-list-header ul li .el-input {
+  display: inline-block !important;
+  width: 200px !important;
+}
+.news-detail-dialog {
+  /* overflow: scroll; */
+}
+.news-list-container .newsTitle {
+  height: 40px;
+  line-height: 40px;
+  font-size: 18px;
+}
+.news-list-container .newsAuthor {
+  height: 40px;
+  line-height: 40px;
+}
+.news-list-container .newsContent {
+  height: 40px;
+  line-height: 40px;
+}
+.news-list-container .el-dialog .el-dialog__body {
+  overflow-y: auto !important;
+  max-height: 300px;
+  height: auto;
+}
+.news-list-container .el-dialog__footer{
+  text-align: center;
+}
+.news-review-dialog ul li {
+    display: flex;
+    padding-bottom: 15px;
+}
+.news-review-dialog .review-title {
+    width: 60px;
+}
+.news-list-container .text-danger{
+  color: #F56C6C;
+}
+</style>
