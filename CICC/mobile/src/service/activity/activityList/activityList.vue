@@ -124,9 +124,10 @@ export default {
 <style scoped lang="less">
 .activityList{
     background-color: #f3f3f3;
+    padding-top:20px;
 }
 .activityList .activity-item{
-    margin-bottom:20px;
+    margin-bottom:15px;
     background-color: #fff;
 }
 .activityList .activity-item{
@@ -186,11 +187,12 @@ export default {
             text-align: center;
             float: right;
             .statusDisplay{
-                height:30px;
-                line-height: 30px;
+                height:36px;
+                line-height: 36px;
                 position: absolute;
                 // bottom: 10px;
                 right:20px;
+                bottom: 5px;
                 padding:2px 10px;
                 font-size: 24px;/*px*/
                 color:#fff;
@@ -201,12 +203,12 @@ export default {
     }
 }
 .activityList .watting{
-    background-color: #c9c500;
+    background-color: #f57260;
 }
 .activityList .success{
-    background-color:#8bc34a;
+    background-color:#b99052;
 }
 .activityList .warn{
-    background-color:#e51c23;
+    background-color:#cfcfcf;
 }
 </style>

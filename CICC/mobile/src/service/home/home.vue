@@ -2,8 +2,13 @@
     <div class="home">
         <Layout @on-loadBottom="loadBottom" @on-loadTop="loadTop" :allLoaded="allLoaded">
             <div slot="header" id="header">
-                <Header :title="title" ></Header>
-                <!-- <Search></Search> -->
+                <Header :title="title"></Header>
+                <!-- <mt-header :title="title">
+                    <mt-button icon="back" slot="left" @click="back"></mt-button>
+                    <mt-button slot="right" @click="goPersonal">
+                        <span class="iconfont icon-weibiaoti2fuzhi12"></span>
+                    </mt-button>
+                </mt-header> -->
                 <TitleNav class="titleNav" @on-tabChange="changeTab"></TitleNav>   
             </div>
             <div slot="main" ref="main" class="main" v-if="this.type == 'news'">
@@ -19,7 +24,7 @@
             </div>
         </Layout>
         <div class="edit" @click="newsDetials" v-if="this.type == 'news'">
-            <span class="iconfont icon-bianji"></span>
+            <span class="iconfont icon-tubiao09"></span>
         </div>
     </div>
 </template>
@@ -92,6 +97,14 @@ export default {
         }
     },
     methods: {
+        //返回中金通
+        back(){
+            appnest.navigation.closeWindow();
+        },
+        //进入个人中心
+        goPersonal(){
+            this.$router.push("/personal")
+        },
         //获取数据列表
         getDataList() {
             var data = {
@@ -166,7 +179,6 @@ export default {
         //获取滚动的高度
         getscrollTops(data){
             this.homescrollTops = this.$children[0].$refs.main.scrollTop;
-            console.log(this.homescrollTops)
         },
     },
     
@@ -180,6 +192,13 @@ export default {
     box-shadow:0 2px 1px 0px rgba(0,0,0,0.10);/*no*/
     box-sizing: border-box;
 }
+.home .mint-header{
+    background-color: #b99052;
+    color: #fff;
+    border: 1px solid #F3F3F3;
+    height: 90px;
+    font-size: 32px!important;/*px*/
+}
 .home .main{
     margin-top:164px;
 }
@@ -187,6 +206,8 @@ export default {
     height: 140px;
     text-align: center;
     padding-top:40px;
+    font-size: 28px;
+    color:#999
 }
 .home .main .nothing{
     padding-top:60px;
@@ -194,7 +215,7 @@ export default {
     text-align: center;
 }
 .edit{
-    background-color: #cac7c7;
+    background-color: #fff;
     border-radius: 40px;
     text-align: center;
     position: fixed;
@@ -204,8 +225,10 @@ export default {
     width: 80px;
     line-height: 80px;
     z-index: 1000;
+    box-shadow:0 2px 10px 0px rgba(0,0,0,0.3);/*no*/
 }
 .edit .iconfont{
     font-size: 35px;/*px*/
+    color: #b99052
 }
 </style>

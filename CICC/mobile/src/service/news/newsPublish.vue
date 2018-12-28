@@ -15,8 +15,8 @@
                 <div contenteditable="true" ref="editor" 
                      @focus="focusEditor" 
                      @blur="blurEditor"
-                     @input="changeEditor" class="content">
-                    <p v-if="contentTip" id="tip">请输入正文(30-500)......</p>
+                     @input="changeEditor" class="content" placeholder="请输入正文(30-500)......">
+                    <!-- <p v-if="contentTip" id="tip">请输入正文(30-500)......</p> -->
                 </div>
             </div>
         </div>
@@ -64,21 +64,21 @@ export default {
                     return;
                 }
             }
-
+            this.newReqData.newsContent =   this.newReqData.newsContent.replace("<!---->","")
             if(this.newReqData.newsContent.replace(/\n/ig,"") === ''){
                   this.Toast('请输入新闻内容')
                   return false;
             }else{
-                if(this.newReqData.title.length<30||this.newReqData.title.length>500){
+                if(this.newReqData.newsContent.length<30||this.newReqData.newsContent.length>500){
                     this.Toast('请输入正确的新闻内容字数')
                     return;
                 }
             }
-            this.newReqData.newsContent =   this.newReqData.newsContent.replace("<!---->","")
+            
+            
             let obj = {
                 params: JSON.stringify(this.newReqData)
             }
-
             this.newsPublishReq(obj).then(res=>{
                  if(res.resultCode === 200){
                      this.Toast('发布成功')
@@ -155,10 +155,18 @@ export default {
             border:1px solid rgb(214, 214, 214);
             outline: none;
             background:#fff;
-
+            text-indent: 52px;
             #tip{
                color:rgb(143, 143, 143);
             }
+        }
+        .content:empty:before{
+            content: attr(placeholder);
+            color:rgb(143, 143, 143);
+            margin-left:-52px;
+        }
+        .content:focus:before{
+            content:none;
         }
     }
 }

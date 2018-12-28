@@ -65,7 +65,7 @@
                         <div class="detTitle">活动详情</div>
                         <div class="detCon">
                              <!-- ref="activityDetail" @scroll="handleScroll" -->
-                            <textarea class="activityDetail" rows="1" ref="activityDetail" @scroll="handleScroll" v-model="activityData.content" maxlength="2000"></textarea>
+                            <textarea style="resize:none" class="activityDetail" rows="15" v-model="activityData.content" maxlength="2000"></textarea>
                         </div>
                     </div>
                 </div>
@@ -114,6 +114,7 @@ export default {
             beginDate:new Date('2000-01-01'),//开始时间
             endDate:new Date('2050-12-31'),//结束时间
             nowTime:'',//当前时间
+            base64Image:''
         }
     },
     created() {
@@ -121,7 +122,9 @@ export default {
     },
     methods: {
         handleScroll(){
-            document.querySelector('.activityDetail').offsetHeight = this.$refs.activityDetail.scrollHeight
+            // document.querySelector('.activityDetail').offsetHeight = this.$refs.activityDetail.scrollHeight
+            this.$refs.activityDetail.style.height = this.$refs.activityDetail.scrollHeight
+            console.log(this.$refs)
         },
         //设置活动开始时间
         setBeginDate(){
@@ -205,56 +208,29 @@ export default {
                 }
             })
         },
-         //base64转
-        dataURLtoBlob(dataurl,filename) {
-            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-            while(n--){
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            return new File([u8arr], filename, {type:mime});
-        },
-
-        //选择图片
-        chooseImg(){
-            appnest.photo.album({
-                // crop: true,// 图片需要进行裁剪
-                // cropWidth: 300,//裁剪图片像素
-                success: res => {
-                    Toast("appnest.photo.album")
-                    this.imgFile = res.imagePath; // 拍照生成本地图片路径
-                    $('#imagebg').attr('src',this.getObjectURL(this.imgFile));
-                },
-                fail: res => {
-                    Toast(res.errMsg);
-                }
-            });
+        //将图片转为base64
+        toBase64(imgFile){
             appnest.photo.getBase64Image({
-                imagePath: this.imgFile, // 图片全路径
+                imagePath: imgFile, // 图片全路径
                 success: res => {
-                    Toast("appnest.photo.getBase64Image")
                     this.base64Image = res.data; // 返回图片的base64编码数据
+                    this.fdAjax(this.base64Image);
                 },
                 fail: res => {
                     Toast(res.errMsg);
                 }
             });
-            // this.imgFile = $("#upfile").get(0).files[0]
-            // $('#imagebg').attr('src',this.getObjectURL(this.imgFile));
-            var blod = this.dataURLtoBlob(this.base64Image,"file_"+Date.parse(new Date())+".png");
+        },
+        //上传图片
+        fdAjax(blod){
             var _this = this;
-            var fd = new FormData();
-            fd.append("userId", localStorage.getItem("userIdPMD"));
-            fd.append("upfile", blod);
+            var data = {base64File:blod};
             $.ajax({
-                url: "http://118.144.88.221:8040/uploadImageServlet",
+                url: "http://118.144.88.221:8040/uploadBase64Servletbase64File",
                 type: "POST",
-                processData: false,//不处理发送的数据，因为data值是FormData对象，不需要对数据做处理
-                contentType: false,//不设置Content-type请求头
-                data: fd,
+                data: data,
                 success: function(d) {
                     var d = JSON.parse(d);
-                    Toast(d)
                     if(d.resultCode == 200){
                         _this.activityData.banner = d.resultJson[0]
                         Toast('图片上传成功')
@@ -267,17 +243,23 @@ export default {
                 }
             });
         },
-        //不同浏览器下的路径不同
-        getObjectURL(file) {
-            var url = null;
-            if (window.createObjectURL != undefined) { // basic
-                url = window.createObjectURL(file);
-            } else if (window.URL != undefined) { // mozilla(firefox)
-                url = window.URL.createObjectURL(file);
-            } else if (window.webkitURL != undefined) { // webkit or chrome
-                url = window.webkitURL.createObjectURL(file);
-            }
-            return url;
+      //选择图片
+        chooseImg(){
+            var _this = this;
+            appnest.photo.album({
+                success: res => {
+                    this.imgFile = res.thumbnailPath;
+                    if(this.imgFile){
+                        _this.toBase64(this.imgFile);
+                    }else{
+                        _this.toBase64(res.thumbnailPath);
+                    }
+                },
+                fail: res => {
+                    Toast(res.errMsg);
+                }
+            });
+        
         },
     },
     

@@ -1,12 +1,8 @@
 <template>
    <div class="findDetailsWrap">
         <div class="headerWrap">
-            <!-- <Header1 :title="title"></Header1> -->
             <mt-header :title="title" fixed>
                 <mt-button icon="back" slot="left" @click="back"></mt-button>
-                <!-- <mt-button slot="right" @click="release">
-                    <span :class="spanIcon" class="iconfont"></span>
-                </mt-button> -->
             </mt-header>
         </div>
         <div class="scrollWrap" ref="details">
@@ -257,10 +253,9 @@ export default {
     -webkit-user-select:none;
     background:#f4f5f6;
     .mint-header{
-        background-color: #f5f7f8;
-        color: #000;
-        border: 1px solid #F3F3F3;
-        height: 80px;
+        background-color: #b99052;
+        color: #fff;
+        height: 90px;
         font-size: 32px!important;/*px*/
     }
     div,a,ul,li,span,i,p,img,h1,h2,h3,h4,h5,h6{
@@ -307,13 +302,16 @@ export default {
         margin-top:80px;
         background-color: #fff;
         .title{
-            margin:20px 0 20px;
+            margin:10px 0 10px;
             font-style:normal;
-            font-size:36px;/*px*/
+            font-size:32px;/*px*/
             color:#343434;
         }
         .content{
             font-size: 28px;/*px*/
+            letter-spacing: -1px;
+            color: #666666;
+            text-indent: 56px;
         }
         .userHeader{
             width:100%;
@@ -354,6 +352,7 @@ export default {
         .commentContent{
             padding:0 0 0 80px;
             color:#343434;
+            word-wrap: break-word;
             .mainComment{
                 font-size:28px;/*px*/
                 line-height:32px;
@@ -376,7 +375,7 @@ export default {
     }
     .articleComments{
         margin-top:2px;
-        background:#fff;
+        // background:#fff;
         padding-bottom:90px;
         #allComment{
             background-color: #f4f5f6;
@@ -418,7 +417,8 @@ export default {
                         justify-content: center;
                         font-size:22px;/*px*/
                         .userName{
-                            color:#ef4454;
+                            // color:#ef4454;
+                            color:#b99052;
                             margin-bottom:5px;
                         }
                         .time{

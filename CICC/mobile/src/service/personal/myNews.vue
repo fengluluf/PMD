@@ -20,7 +20,7 @@
                         <div class="msg">
                            <div class="titleImg"> 
                                <img v-if="item.editorHeadImg" :src="item.editorHeadImg" :alt="item.editorName" class="avatar">
-                               <img v-if="!item.editorHeadImg" src="@/assets/images/head.jpg"  :alt="item.editorName" class="avatar"> 
+                               <!-- <img v-if="!item.editorHeadImg" src="@/assets/images/head.jpg"  :alt="item.editorName" class="avatar">  -->
                            </div>
                           <div class="titleName">{{item.editorName}}</div>
                         </div>
@@ -31,7 +31,7 @@
                     </div>
                     <div class="newsMain"   @click="leaveMsg(item)">
                         <div class="mainTitle">{{item.title}}</div>
-                        <div class="mainDetail">{{item.newsContent}}</div>
+                        <div class="mainDetail" v-html="item.newsContent"></div>
                     </div>
                     <div class="newsFooter">
                         <div class="footerTime">{{item.createDate}}</div>
@@ -42,7 +42,7 @@
             </van-list>    
         </div>
         <div class="edit" @click="newsDetials">
-            <span class="iconfont icon-bianji"></span>
+            <span class="iconfont icon-tubiao09"></span>
         </div>
     </div>
 </template>
@@ -182,18 +182,17 @@ export default {
 .myNews{
     height: 100%;
     .header{
-        background-color: #fff;
         z-index:999;
         width:100%;
-        height:80px;
-        line-height:80px;
+        height:90px;
+        line-height:90px;
         position: fixed;
         top:0;
         .mint-header{
-            background-color: #f5f7f8;
-            color: #000;
+            background-color: #b99052;
+            color: #fff;
             border: 1px solid #F3F3F3;
-            height: 80px;
+            height: 90px;
             font-size: 32px!important;/*px*/
         }
     }
@@ -256,7 +255,7 @@ export default {
                     font-size: 26px;/*px*/
                     margin-top:10px;
                     word-break:break-all;
-                    text-indent:30px;
+                    text-indent:52px;
                 }
             }
             .newsFooter{
@@ -316,7 +315,7 @@ export default {
         }
     }
     .edit{
-        background-color: #cac7c7;
+        background-color: #fff;
         border-radius: 40px;
         text-align: center;
         position: fixed;
@@ -326,9 +325,11 @@ export default {
         width: 80px;
         line-height: 80px;
         z-index: 1000;
-        .iconfont{
-            font-size: 35px;/*px*/
-        }
+        box-shadow:0 2px 10px 0px rgba(0,0,0,0.3);/*no*/
+    }
+    .edit .iconfont{
+        font-size: 35px;/*px*/
+        color: #b99052
     }
 
 }

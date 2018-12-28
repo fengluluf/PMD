@@ -46,10 +46,10 @@ export default {
 
 <style scoped>
 .mint-header{
-    background-color: #f5f7f8;
-    color: #000;
+    background-color: #b99052;
+    color: #fff;
     border: 1px solid #F3F3F3;
-    height: 80px;
+    height: 90px;
     font-size: 32px!important;/*px*/
 }
 </style>

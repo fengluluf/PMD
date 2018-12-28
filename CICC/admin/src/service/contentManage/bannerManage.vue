@@ -192,8 +192,8 @@ export default {
       banner: {
         name: '',
         img: '',
-        type: '',
-        link: '',
+        type:1,
+        link: '/newsDetials?id=',
         fileList: []
       },
       modifyBanner: {},
@@ -265,8 +265,8 @@ export default {
       this.banner = {
         name: '',
         img: '',
-        type: '',
-        link: '',
+        type: 1,
+        link: '/newsDetials?id=',
         fileList: []
       };
       this.modifyBanner = {};

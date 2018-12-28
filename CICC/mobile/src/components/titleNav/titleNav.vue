@@ -54,17 +54,26 @@ export default {
     -ms-flex-align: middle;
     align-items: middle;
     overflow: auto;
+    background-color: #fff;
 }
 .titleNav span{
     text-align: center;
     font-size: 28px;/*px*/
     -ms-flex-negative: 0;
     flex-shrink: 0;
-    padding: 20px 45px;
+    margin: 2px 40px;
+    padding:15px 0;
     display: inline;
+    color:#999;
+    font-size: 32px;/*px*/
+    font-weight: bold
 }
 .titleNav span.active{
-    color: #e83f48;
+    color: #b99052;
+    border-bottom:2px solid #b99052;
     /* background-color: #999; */
+}
+.titleNav span.active::after{
+    /* content:"︒" */
 }
 </style>

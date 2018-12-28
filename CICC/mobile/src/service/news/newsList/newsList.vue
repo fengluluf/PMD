@@ -22,7 +22,7 @@
                     </div>
                     <div class="newsMain" @click="leaveMsg(item)">
                         <div class="mainTitle">{{item.title}}</div>
-                        <div class="mainDetail">{{item.newsContent}}</div>
+                        <div class="mainDetail" v-html="item.newsContent"></div>
                     </div>
                     <div class="newsFooter">
                         <div class="footerTime">{{item.createDate}}</div>
@@ -106,24 +106,17 @@ export default {
 
 
 <style lang="less" scoped>
-// .newsList{
-//      margin-bottom: 80px;
-// }
-.newsList .swipe{
-    // height: 400px;
-    // width:100%;
-}
 .newsList .swipeImg{
     width:100%;
-    height:400px;   
+    height:350px;   
 }
 .newsList  .news{
-    padding-top:28px;
-    background-color: #f3f3f3;
+    // padding-top:20px;
+    background-color: #f5f5f5;
 }
 .newsList  .newsItem{
     /* height:320px; */
-    margin-bottom:28px;
+    margin-bottom:20px;
     background-color: #fff;
     border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
@@ -150,15 +143,16 @@ export default {
     padding:20px 20px;
 }
 .newsList  .newsItem .newsMain .mainTitle{
-    padding:30px 0 10px;
+    padding:10px 0;
     font-weight: bold;
     font-size: 32px;/*px*/
 }
 .newsList  .newsItem .newsMain .mainDetail{
-    font-size: 26px;/*px*/
-    margin-top:10px;
+    font-size: 28px;/*px*/
+    letter-spacing: -1px;
     word-break:break-all;
-    text-indent:30px;
+    text-indent:52px;
+    color:#666666;
 }
 .newsList  .newsItem .newsFooter{
     padding:0 20px;

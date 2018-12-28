@@ -71,8 +71,8 @@ export default {
         background-color: #fff;
         z-index:999;
         width:100%;
-        height:80px;
-        line-height:80px;
+        height:90px;
+        line-height:90px;
         position: fixed;
         top:0
     }

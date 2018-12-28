@@ -15,31 +15,31 @@
             <div class="listBox">
                 <div class="list">
                     <div class="listItem" @click="goMyNews">
-                        <span class="iconfont icon-xinwenzixun"></span>
+                        <span class="iconfont icon-xinwen"></span>
                         <span class="listCon">我的新闻</span>
-                        <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                        <span class="iconfont icon-jinru goDetail"></span>
                     </div>
                     <div class="listItem" @click="goMyActivity">
-                        <span class="iconfont icon-baobiaoxinwen"></span>
+                        <span class="iconfont icon-huodong"></span>
                         <span class="listCon">我的活动</span>
-                        <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                        <span class="iconfont icon-jinru goDetail"></span>
                     </div>
                     <div class="listItemLast" @click="goMyComment">
                         <span class="iconfont icon-pinglun"></span>
                         <span class="listCon">我的评论</span>
-                        <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                        <span class="iconfont icon-jinru goDetail"></span>
                     </div>
                 </div>
                 <div class="list">
                     <div class="listItemLast" @click="goSetting">
                         <span class="iconfont icon-shezhi"></span>
                         <span class="listCon">设置</span>
-                        <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                        <span class="iconfont icon-jinru goDetail"></span>
                     </div>
                     <!-- <div class="listItemLast">
                         <span class="iconfont icon-xinwenzixun"></span>
                         <span class="listCon">意见反馈</span>
-                        <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                        <span class="iconfont icon-jinru goDetail"></span>
                     </div> -->
                 </div>
             </div>
@@ -106,29 +106,27 @@ export default {
     
 }
 </script>
-<style scoped>
+<style scoped lang="less">
 .personal{
     height: 100%;
-    background-color: #f5f7f8;
+    background-color: #f3f3f3;
 }
 .personal .header{
-    background-color: #fff;
     z-index:999;
     width:100%;
-    height:80px;
-    line-height:80px;
+    height:90px;
+    line-height:90px;
     position: fixed;
     top:0
 }
 .personal .header .mint-header{
-    background-color: #f5f7f8;
-    color: #000;
-    border: 1px solid #F3F3F3;
-    height: 80px;
+    background-color: #b99052;
+    color: #fff;
+    height: 90px;
     font-size: 32px!important;/*px*/
 }
 .personal .headerBox{
-    background-color: #f5f7f8;
+    background-color: #b99052;
     padding:0 10px;
     width:100%;
     box-sizing: border-box;
@@ -143,25 +141,26 @@ export default {
 }
 .personal .main{
     padding-top:80px;
-    background-color:#f5f7f8;
+    background-color:#f3f3f3;
 }
 .personal .main .per{
-    background-color:#BD8C43;
-    /* background: url("../../assets/images/personal_bg.jpg") no-repeat; */
-    /* background-size: 100% 400px; */
-    height:500px;
+    // background-color:#BD8C43;
+    background: url("../../assets/images/personal_bg.png") no-repeat; 
+    background-size: 100% 400px; 
+    height:400px;
     width:100%;
     padding:40px auto;
     text-align: center;
+    color:#fff
 }
 .personal .main .per .img{
-    width:180px;
-    height:180px;
-    margin-top:70px;
-    border-radius: 90px;
+    width:160px;
+    height:160px;
+    margin-top:30px;
+    border-radius: 80px;
 }
 .personal .main .per .name{
-    padding:40px;
+    padding:30px;
 }
 .personal .main .per .sign{
     padding:0 10px;
@@ -176,52 +175,41 @@ export default {
     margin-top:20px;
     background-color: #fff;
     padding:0 20px;
+    .icon-xinwen{
+        color: #2bbff8;
+    }
+    .icon-huodong{
+        color:#ffd800;
+    }
+    .icon-pinglun{
+        color:#ffa360;
+    }
+    .icon-shezhi{
+        color:#9f9f9f
+    }
 }
 .personal .main .listBox .listItem{
-    border-bottom: 1px solid #f5f7f8;/*no*/
+    border-bottom: 1px solid #ececec;/*no*/
     padding:0 10px;
-    height:80px;
-    line-height:80px;
+    height:90px;
+    line-height:90px;
 }
 .personal .main .listBox .listItemLast{
     padding:0 10px;
-    height:80px;
-    line-height:80px;
-}
-.personal .main .listBox .listIcon{
-    float: right;
-    height:80px;
-    line-height:80px;
-    display: flex;
-    align-items: center;
-    font-size: 24px;/*px*/
-    color:#999
-}
-.personal .main .listBox .listIcon img{
-    width: 36px;
-    height:36px;
+    height:90px;
+    line-height:90px;
 }
 .personal .main .listBox .listCon{
     width:196px;
     display: inline-block;
+    padding-left:10px;
 }
 .personal .main .listBox .goDetail{
     float: right;
-    font-size: 40px;/*px*/
+    font-size: 38px;/*px*/
+    color: #999;
 }
-.personal .main .listBox .perImg{
-    padding:10px 0;
-    display: inline-block;
-}
-.personal .main .listBox .perImg img{
-    width:80px;
-    height:80px;
-    border-radius: 40px;
-}
-.personal .main .listBox .perMsg{
-    display: inline-block;
-}
-.personal .main .listBox .perActivity{
-    padding-bottom: 40px;
+.personal .main .listBox .iconfont{
+    vertical-align: middle;
 }
 </style>

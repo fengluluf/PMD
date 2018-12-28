@@ -63,32 +63,32 @@ export default {
 <style scoped lang="less">
 .setting{
     height: 100%;
-    background-color:#f5f7f8;
+    background-color:#f3f3f3;
     .header{
         background-color: #fff;
         z-index:999;
         width:100%;
-        height:80px;
-        line-height:80px;
+        height:90px;
+        line-height:90px;
         position: fixed;
         top:0
     }
     .main{
-        padding-top:80px;
+        padding-top:90px;
         .list{
             background-color: #fff;
             padding:0 20px;
             margin-bottom:20px;
             .listItem{
-                border-bottom: 1px solid #999;/*no*/
+                border-bottom: 1px solid #ececec;/*no*/
                 padding:0 10px;
-                height:80px;
-                line-height:80px;
+                height:90px;
+                line-height:90px;
             }
             .listItemLast{
                 padding:0 10px;
-                height:80px;
-                line-height:80px;
+                height:90px;
+                line-height:90px;
             }
             .goDetail{
                 float: right;
@@ -103,6 +103,7 @@ export default {
                 height:70px;
                 width:300px;
                 font-size:28px;/*px*/
+                // background-color: #b99052;
             }
         }
     }

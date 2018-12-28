@@ -152,21 +152,22 @@ export default {
     // background-color: #f5f7f8;
 }
 .myComment .header{
-    background-color: #f5f7f8;
     z-index:999;
     width:100%;
-    height:80px;
-    line-height:80px;
+    height:90px;
+    line-height:90px;
     position: fixed;
     top:0
 }
 .myComment .main{
-    margin-top:80px;
-    background-color: #f5f7f8;
+    margin-top:90px;
+    background-color: #f3f3f3;
     .noMore{
         height: 140px;
         text-align: center;
         padding-top:40px;
+        font-size: 28px;
+        color:#999
     }
 }
 .myComment .main .listItem{
@@ -207,9 +208,10 @@ export default {
             font-size: 32px;/*px*/
         }
         .mainDetail{
-            font-size: 26px;/*px*/
+            font-size: 28px;/*px*/
             margin-top:10px;
             word-break:break-all;
+            letter-spacing: -1px;
         }
     }
 }

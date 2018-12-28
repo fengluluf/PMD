@@ -48,12 +48,12 @@
                 <el-table-column  align="center" prop="createTime" label="发布时间" width="140">
                     <template slot-scope="scope">
                         {{scope.row.createTime | formatDate}}
-                    </template> 
+                    </template>
                 </el-table-column>
                 <el-table-column  align="center" prop="beginDate" label="活动时间" width="180">
                     <template slot-scope="scope">
                         {{scope.row.beginDate}}<span> - </span>{{scope.row.endDate}}
-                    </template> 
+                    </template>
                 </el-table-column>
                 <el-table-column  align="center" prop="address" label="活动地点" width=""></el-table-column>
                 <el-table-column  align="center" prop="editorName" label="发布者" width="120"></el-table-column>
@@ -68,7 +68,7 @@
                 <!-- <el-table-column  align="center" prop="content" label="内容" width="">
                     <template slot-scope="scope">
                         <el-button type="text" size="small" @click="activityDetailHandler(scope.row)">详情</el-button>
-                    </template>   
+                    </template>
                 </el-table-column> -->
                 <el-table-column  align="center"  width="160" label="操作">
                     <template slot-scope="scope">
@@ -76,7 +76,7 @@
                         <el-button type="text" size="small" @click="isTop(scope.row,scope.$index)" v-else>置顶</el-button>
                         <el-button type="text" size="small" @click="activityReview(scope.row,scope.$index)" :disabled="scope.row.status !== 1">审核</el-button>
                         <el-button type="text" size="small" @click="activityDelete(scope.row)" class="text-danger">删除</el-button>
-                    </template>   
+                    </template>
                 </el-table-column>
             </el-table>
         </div>
@@ -146,7 +146,7 @@ export default {
           total: 0
       },
       dialogPreview: false,
-      activityDetail: {}, 
+      activityDetail: {},
       clickidx:1,
       dataidx:1,
       deleteidx:1,
@@ -249,7 +249,7 @@ export default {
             var _this=this;
             if(_this.dataidx==1){
                 _this.dataidx=0;
-                _this.getTableData();                
+                _this.getTableData();
                 return;
             }
             var data = {
@@ -327,7 +327,7 @@ export default {
             // data.cause = this.review.cause;
             data.userId = userId;
             data.activityId = this.currentItemId;
-            
+
             if(this.review.pass == 1) {
                 pageData.itemReviewPass(data).then(d => {
                     if (d.resultCode == 200) {
@@ -370,33 +370,42 @@ export default {
         },
         //删除活动
         activityDelete(row){
+          this.$confirm('此操作将删除该文件, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
             var _this = this;
             var data = 'ids='+row.id;
             var data = {
-                userId:userId,
-                ids:row.id,
+              userId:userId,
+              ids:row.id,
             }
             pageData.deleteOne(data).then(function (d) {
-                if(d.resultCode == 200) {
-                    _this.$message({
-                        message: '删除成功',
-                        type: 'success'
-                    });
-                    _this.activitySearchHandler();
-                }else{
-                    _this.$message({
-                        type: "warning",
-                        message: d.resultMessage
-                    });
-                }
+              if(d.resultCode == 200) {
+                _this.$message({
+                  message: '删除成功',
+                  type: 'success'
+                });
+                _this.activitySearchHandler();
+              }else{
+                _this.$message({
+                  type: "warning",
+                  message: d.resultMessage
+                });
+              }
             })
+          }).catch(() => {
+
+          });
+
         },
         //点击搜索
         activitySearchHandler() {
             var _this=this;
             if(_this.clickidx==1){
                 _this.clickidx=0;
-                _this.activitySearchHandler();                
+                _this.activitySearchHandler();
                 return;
             }
             var data = {
@@ -462,7 +471,7 @@ export default {
                     });
                 }
             });
-            
+
         }
     },
   computed: {},

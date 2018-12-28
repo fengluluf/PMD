@@ -3,7 +3,7 @@
         <div class="headerBox">
             <span @click="goBack" class="iconfont icon-fanhui"></span>
             <span class="title">{{title}}</span>
-            <span class="iconfont icon-wodexuanzhong" @click="goPersonal"></span>
+            <span class="iconfont icon-weibiaoti2fuzhi12" @click="goPersonal"></span>
         </div>
     </div>
 </template>
@@ -37,29 +37,23 @@ export default {
 </script>
 
 <style scoped>
-.header{
-    height:80px;
-    line-height:80px;
-    background-color: #f5f7f8;
-    text-align: center;
-    width:100%;
-}
 .header .headerBox{
-    background-color: #f5f7f8;
+    background-color: #b99052;
     padding:0 20px;
     width:100%;
     box-sizing: border-box;
     text-align: center;
-    height: 40px;/*no*/
-    line-height: 40px;/*no*/
+    height: 80px;
+    line-height: 80px;
+    color:#fff;
 }
 .header .icon-fanhui{
     float: left;
-    font-size:32px;/*px*/
+    font-size:28px;/*px*/
 }
-.header .headerBox .icon-wodexuanzhong{
+.header .headerBox .icon-weibiaoti2fuzhi12{
     float: right;
     font-size:40px;/*px*/
-    color:rgb(141, 141, 141);
+    color:#fff;
 }
 </style>

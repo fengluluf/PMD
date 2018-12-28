@@ -42,14 +42,14 @@
                 <el-table-column  align="center" label="发布时间" width="">
                     <template slot-scope="scope">
                         {{scope.row.createTime | formatDate}}
-                    </template>   
+                    </template>
                 </el-table-column>
                 <el-table-column  align="center" prop="editorName" label="发布者" width="180"></el-table-column>
                 <el-table-column  align="center" label="状态" prop="statusStr" width="180"></el-table-column>
                 <el-table-column  align="center" prop="content" label="内容" width="100">
                     <template slot-scope="scope">
                         <el-button type="text" size="small" @click="newsDetailHandler(scope.row)">详情</el-button>
-                    </template>   
+                    </template>
                 </el-table-column>
                 <el-table-column  align="center"  width="180" label="操作">
                     <template slot-scope="scope">
@@ -57,7 +57,7 @@
                         <el-button type="text" size="small" @click="isTop(scope.row,scope.$index)" v-else>取消置顶</el-button>
                         <el-button type="text" size="small" @click="newsReview(scope.row,scope.$index)" :disabled="scope.row.status !== 1">审核</el-button>
                         <el-button type="text" size="small" @click="deleteItemHandler(scope.row)" class="text-danger" :disabled="scope.row.status == 0">删除</el-button>
-                    </template>   
+                    </template>
                 </el-table-column>
             </el-table>
         </div>
@@ -72,19 +72,18 @@
             </el-pagination>
         </div>
         <el-dialog
-            title="详情"
+            :title="this.newsDetail.title"
             :visible.sync="dialogPreview"
             width="60%"
             :before-close="handleClose" custom-class="aaaa">
             <div class="ql-container news-detail-dialog">
-                <div class="newsTitle">
+                <!--<div class="newsTitle">
                     {{newsDetail.title}}
-                </div>
+                </div>-->
                 <div class="newsAuthor">
                     作者：{{newsDetail.editorName}}
                 </div>
-                <div class="newsContent">
-                    {{newsDetail.newsContent}}
+                <div class="newsContent" v-html="newsDetail.newsContent">
                 </div>
                 <!-- <div>
                     权限：{{newsDetail.auth}}
@@ -159,7 +158,7 @@ export default {
           value: -1
         },
         {
-          label: "删除",
+          label: "已删除",
           value: 0
         },
         {
@@ -354,7 +353,7 @@ export default {
         data.status = this.review.pass;
         data.cause = this.review.cause;
         data.id = this.currentItenId;
-        
+
         PageData.newsReview(data).then(d => {
             if (d.resultCode == 200) {
                 this.$message({
@@ -413,12 +412,17 @@ export default {
   line-height: 40px;
 }
 .news-list-container .newsContent {
-  height: 40px;
-  line-height: 40px;
+  /*max-height: 400px;*/
+  line-height: 25px;
+  text-indent: 28px;
+  word-wrap: break-word;
+}
+.aaaa .el-dialog__body{
+  padding-top: 0px;
 }
 .news-list-container .el-dialog .el-dialog__body {
   overflow-y: auto !important;
-  max-height: 300px;
+  min-height: 300px;
   height: auto;
 }
 .news-list-container .el-dialog__footer{

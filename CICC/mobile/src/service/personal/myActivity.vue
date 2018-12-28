@@ -4,9 +4,6 @@
             <div class="header" slot="header">
                 <mt-header :title="title" fixed>
                     <mt-button icon="back" slot="left" @click="back"></mt-button>
-                    <!-- <mt-button slot="right" @click="release">
-                        <span :class="spanIcon" class="iconfont"></span>
-                    </mt-button> -->
                 </mt-header>
                 <mt-navbar v-model="selected" :fixed="true">
                     <mt-tab-item id="1">我参加的活动</mt-tab-item>
@@ -62,15 +59,7 @@
                                                 <div class="error statusDisplay" v-else-if="item.status==3">未通过</div>
                                             </div>
                                         </div>
-                                        <!-- <div class="time">
-                                            {{item.beginDate}}
-                                        </div> -->
                                     </div>
-                                    <!-- <div class="activity-status">
-                                        <div class="watting statusDisplay" v-if="item.status==1">待审核</div>
-                                        <div class="success statusDisplay" v-else-if="item.status==2">已通过</div>
-                                        <div class="error statusDisplay" v-else-if="item.status==3">未通过</div>
-                                    </div> -->
                                 </div>
                             </div>
                         </div>
@@ -93,7 +82,7 @@
             </div>
         </Layout>
         <div class="edit" @click="release">
-            <span class="iconfont icon-bianji"></span>
+            <span class="iconfont icon-tubiao09"></span>
         </div>
     </div>
 </template>
@@ -263,8 +252,8 @@ export default {
     background-color: #f5f7f8;
     .mint-navbar{
         width: 100%;
-        top:80px;
-        height:80px;
+        top:90px;
+        height:75px;
         box-shadow:0 2px 1px 0px rgba(0,0,0,0.10);/*no*/
     }
     .mint-navbar .mint-tab-item.is-selected{
@@ -273,8 +262,11 @@ export default {
         border-bottom: none;
         z-index: 999;
     }
+    .mint-navbar .mint-tab-item{
+        padding:26px 0;
+    }
     .edit{
-        background-color: #cac7c7;
+        background-color: #fff;
         border-radius: 40px;
         text-align: center;
         position: fixed;
@@ -284,30 +276,32 @@ export default {
         width: 80px;
         line-height: 80px;
         z-index: 1000;
-        .iconfont{
-            font-size: 35px;/*px*/
-        }
+        box-shadow:0 2px 10px 0px rgba(0,0,0,0.3);/*no*/
+    }
+    .edit .iconfont{
+        font-size: 35px;/*px*/
+        color: #b99052
     }
 }
 .myActivity .header{
     background-color: #f5f7f8;
     z-index:999;
     width:100%;
-    height:80px;
-    line-height:80px;
+    height:90px;
+    line-height:90px;
     position: fixed;
     top:0;
     .mint-header{
-        background-color: #f5f7f8;
-        color: #000;
+        background-color: #b99052;
+        color: #fff;
         border: 1px solid #F3F3F3;
-        height: 80px;
+        height: 90px;
         font-size: 32px!important;/*px*/
     }
 }
 .myActivity .main{
     background-color: #f5f7f8;
-    margin-top:160px;
+    margin-top:170px;
     
     // .mint-tab-container-item{
     //      margin-top:160px;
@@ -319,6 +313,8 @@ export default {
         height: 140px;
         text-align: center;
         padding-top:40px;
+        font-size: 28px;
+        color:#999
     }
     .listTitle{
         padding:10px 20px;

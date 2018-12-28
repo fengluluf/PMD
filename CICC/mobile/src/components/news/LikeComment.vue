@@ -1,11 +1,11 @@
 <template>
    <div class="likeComment">
         <div :class="likeData.isConcern == 1?`like zan`:'zan'" @click="newlikeRequest">
-            <i :class="likeActive?'iconfont icon-dianzan1 animateLike':'iconfont icon-dianzan1 noActive'" ></i>
+            <i :class="likeActive?'iconfont icon-dianzan animateLike':'iconfont icon-dianzan noActive'" ></i>
             <span :class="likeActive?'active':'noActive'">{{likeData.concernCount}}</span>
         </div>
         <div class="message" @click="commentClick">
-            <i class="iconfont icon-liuyan"></i>
+            <i class="iconfont icon-pinglun1"></i>
             <span>{{likeData.commentCount}}</span>
         </div>
     </div>

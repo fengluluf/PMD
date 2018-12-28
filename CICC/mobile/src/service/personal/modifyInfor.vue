@@ -19,7 +19,7 @@
                 </div>
                 <div class="listItemLast" @click="setMsg">
                     <span class="listCon">个性签名</span>
-                    <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                    <span class="iconfont icon-jinru goDetail"></span>
                 </div>
             </div>
             
@@ -27,7 +27,7 @@
                 <div class="listItem" @click="showSex=true">
                     <mt-actionsheet :actions="sexOption" v-model="showSex" :closeOnClickModal='false'></mt-actionsheet>
                     <span class="listCon">性别</span>
-                    <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                    <span class="iconfont icon-jinru goDetail"></span>
                     <span class="goDetail">{{selectedSex}}</span>
                 </div>
                 <div class="listItemLast" @click="setBirthday">
@@ -43,7 +43,7 @@
                         date-format="{value} 日">
                     </mt-datetime-picker>
                     <span class="listCon">生日</span>
-                    <span class="iconfont icon-buoumaotubiao52 goDetail"></span>
+                    <span class="iconfont icon-jinru goDetail"></span>
                     <span class="goDetail">{{userMsg.birthday}}</span>
                 </div>
             </div>
@@ -122,14 +122,12 @@ export default {
             return new File([u8arr], filename, {type:mime});
         },
         toBase64(imgFile){
-            MessageBox.alert('toBase64').then(action => { });
             appnest.photo.getBase64Image({
                 imagePath: imgFile, // 图片全路径
                 success: res => {
-                    MessageBox.alert('appnest.photo.getBase64Image',res).then(action => { });
                     this.base64Image = res.data; // 返回图片的base64编码数据
-                    var blod = this.dataURLtoBlob(this.base64Image,"file_"+Date.parse(new Date())+".png");
-                    this.fdAjax(blod);
+                    // var blod = this.dataURLtoBlob(this.base64Image,"file_"+Date.parse(new Date())+".png");
+                    this.fdAjax(this.base64Image);
                 },
                 fail: res => {
                     Toast(res.errMsg);
@@ -138,19 +136,18 @@ export default {
         },
         fdAjax(blod){
             var _this = this;
-            var fd = new FormData();
-            fd.append("userId", localStorage.getItem("userIdPMD"));
-            fd.append("upfile", blod);
-            MessageBox.alert(fd).then(action => { });
+            // var fd = new FormData();
+            // fd.append("userId", localStorage.getItem("userIdPMD"));
+            // fd.append("upfile", blod);
+            var data = {base64File:blod};
             $.ajax({
-                url: "http://118.144.88.221:8040/uploadImageServlet",
+                url: "http://118.144.88.221:8040/uploadBase64Servletbase64File",
                 type: "POST",
-                processData: false,//不处理发送的数据，因为data值是FormData对象，不需要对数据做处理
-                contentType: false,//不设置Content-type请求头
-                data: fd,
+                // processData: false,//不处理发送的数据，因为data值是FormData对象，不需要对数据做处理
+                // contentType: false,//不设置Content-type请求头
+                data: data,
                 success: function(d) {
                     var d = JSON.parse(d);
-                    MessageBox.alert(d).then(action => { });
                     if(d.resultCode == 200){
                         _this.userMsg.headImg = d.resultJson[0]
                         Toast('图片上传成功')
@@ -167,21 +164,20 @@ export default {
         chooseImg(){
             var _this = this;
             appnest.photo.album({
-                // crop: true,// 图片需要进行裁剪
-                // cropWidth: 300,//裁剪图片像素
                 success: res => {
-                    MessageBox.alert("appnest.photo.album",res).then(action => { });
+                    this.imgFile = res.thumbnailPath;
+                    if(this.imgFile){
+                        _this.toBase64(this.imgFile);
+                    }else{
+                        _this.toBase64(res.thumbnailPath);
+                    }
                     // this.imgFile = res.imagePath; // 拍照生成本地图片路径
-                    $('#imagebg').attr('src',this.getObjectURL(this.imgFile));
-                    _this.toBase64(res.imagePath)
+                    // $('#imagebg').attr('src',this.getObjectURL(this.imgFile));
                 },
                 fail: res => {
                     Toast(res.errMsg);
                 }
             });
-            
-            // this.imgFile = $("#upfile").get(0).files[0]
-            // $('#imagebg').attr('src',this.getObjectURL(this.imgFile));
         
         },
         //不同浏览器下的路径不同
@@ -242,20 +238,20 @@ export default {
 <style scoped lang="less">
 .modifyInfor{
     height: 100%;
-    background-color:#f5f7f8;
+    background-color:#f3f3f3;
 }
 .modifyInfor .header{
     background-color: #fff;
     z-index:999;
     width:100%;
-    height:80px;
-    line-height:80px;
+    height:90px;
+    line-height:90px;
     position: fixed;
     top:0
 }
 .modifyInfor .main{
-    padding-top:80px;
-    background-color:#f5f7f8;
+    padding-top:90px;
+    background-color:#f3f3f3;
     .list{
         background-color: #fff;
         padding:0 20px;
@@ -269,17 +265,21 @@ export default {
         .listItem{
             border-bottom: 1px solid #ececec;/*no*/
             // padding:0 10px;
-            height:80px;
-            line-height:80px;
+            height:90px;
+            line-height:90px;
             position: relative;
         }
         .listItemLast{
             // padding:0 10px;
-            height:80px;
-            line-height:80px;
+            height:90px;
+            line-height:90px;
         }
         .goDetail{
             float: right;
+        }
+        .icon-jinru{
+            color: #999;
+            font-size:38px;
         }
         .img{
             height:140px;

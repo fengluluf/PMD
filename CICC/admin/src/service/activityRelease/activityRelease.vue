@@ -5,7 +5,7 @@
                 <div class="rowTitle">
                     <span>活动名称</span>
                 </div>
-                <el-input v-model="activityData.actName" placeholder="请输入内容" class="rowCon" @change="checkEmpty('actName')"></el-input>
+                <el-input v-model="activityData.actName" maxlength="30" placeholder="请输入内容" class="rowCon" @change="checkEmpty('actName')"></el-input>
                 <div class="errorBox">{{errorMsg.actName}}</div>
             </div>
             <div class="ar-img">
@@ -48,14 +48,14 @@
                 <div class="rowTitle">
                     <span>活动地点</span>
                 </div>
-                <el-input v-model="activityData.actPlace" placeholder="请输入内容" class="rowCon" @change="checkEmpty('actPlace')"></el-input>
+                <el-input v-model="activityData.actPlace" maxlength="50" placeholder="请输入内容" class="rowCon" @change="checkEmpty('actPlace')"></el-input>
                 <div class="errorBox">{{errorMsg.actPlace}}</div>
             </div>
             <div class="ar-con">
                 <div class="rowTitle">
                     <span>活动简介</span>
                 </div>
-                <el-input type="textarea" :rows="8" placeholder="请输入内容" v-model="activityData.actCon" class="rowCon" @change="checkEmpty('actCon')"></el-input>
+                <el-input type="textarea" :rows="8" maxlength="2000" placeholder="请输入内容" v-model="activityData.actCon" class="rowCon" @change="checkEmpty('actCon')"></el-input>
                 <div class="errorBox">{{errorMsg.actCon}}</div>
             </div>
             <!-- <div class="">
@@ -150,14 +150,14 @@ export default {
                 actEndTime:"",
                 actPlace:"",//活动地点
                 actCon:"",//活动简介
-                actPer:"",//活动权限
+                actPer:1,//活动权限
                 actImg:"",
                 person:'',
             },
             perOptions: [
                 {
                 label: "公开",
-                value: "1"
+                value: 1
                 },
                 // {
                 // label: "不公开",
@@ -186,13 +186,13 @@ export default {
         //校验是否为空
         checkEmpty(val){
             this.errorMsg[val] = '';
-            if(this.activityData[val] === '') {
+            if(this.activityData[val] == '') {
               if(val == 'actStartTime' || val == 'actEndTime'){
                 this.errorMsg['actTime'] = '此项不能为空';
                 return false;
               }
-                this.errorMsg[val] = '此项不能为空';
-                return false;
+              this.errorMsg[val] = '此项不能为空';
+              return false;
             }else{
               if(val == 'actTime' && this.activityData.actStartTime > 0 && this.activityData.actEndTime > 0){
                 if(this.activityData.actEndTime <= this.activityData.actStartTime){
@@ -206,19 +206,22 @@ export default {
         //点击发表
         release(){
             var _this = this;
+            if(!this.checkEmpty('actName')){
+              return;
+            }
             var data = {
                 userId:sessionStorage.getItem("userId"),
                 title: this.activityData.actName,
                 content: this.activityData.actCon,
                 banner: this.activityData.actImg,
-                begintime: this.activityData.actStartTime,
-                endtime: this.activityData.actEndTime,
+                beginTime: this.activityData.actStartTime,
+                endTime: this.activityData.actEndTime,
                 address: this.activityData.actPlace,
             };
             if(this.activityData.actImg != '' && this.imgFile != ''){
                 this.errorMsg.actImg = "";
                 // data.banner = this.activityData.actImg;
-                if(this.checkEmpty('actName') && this.checkEmpty('actStartTime') && this.checkEmpty('actEndTime') && this.checkEmpty('actPlace') && this.checkEmpty('actCon')){
+                if(this.checkEmpty('actName')&&this.checkEmpty('actStartTime') && this.checkEmpty('actEndTime') && this.checkEmpty('actPlace') && this.checkEmpty('actCon')){
                     pageData.releaseAct(data).then(function (d) {
                         if(d.resultCode == 200) {
                             _this.$message({
@@ -242,7 +245,7 @@ export default {
               return;
             }
         },
-        //点击取消
+//点击取消
         cancel(){
             this.activityData = {
                 actName:'',
@@ -250,7 +253,7 @@ export default {
                 actEndTime:"",
                 actPlace:"",
                 actCon:"",
-                actPer:"",
+                actPer:1,
                 actImg:"",
             }
         },
@@ -289,7 +292,7 @@ export default {
             var _this = this;
             this.errorMsg.actImg = "";
             var fd = new FormData();
-            var img = $("#upfile").get(0).files[0]
+            var img = $("#upfile").get(0).files[0];
             if(img){
                 fd.append("userId", sessionStorage.getItem("userId"));
                 fd.append("upfile", img);
@@ -306,7 +309,11 @@ export default {
                 success: function(d) {
                     var d = JSON.parse(d);
                     if(d.resultCode == 200){
-                        _this.activityData.actImg = d.resultJson[0]
+                        _this.activityData.actImg = d.resultJson[0];
+                      _this.$message({
+                        type: "success",
+                        message: '上传成功'
+                      });
                     }else{
                         _this.$message({
                             type: "warning",
@@ -363,7 +370,7 @@ export default {
 }
 .activity-release .rowCon{
     display: inline-block;
-    /* width:120px; */
+     width:52%;
 }
 .activity-release .errorBox{
     display: inline-block;

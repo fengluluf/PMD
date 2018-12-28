@@ -49,7 +49,8 @@
             </div> -->
             <div class="activity-detail-apply" v-if="activityDetail.status!=1">
                 <mt-button type="default" class="hasEnd" disabled v-html="'已结束'" v-if="activityDetail.showStatus==6"></mt-button>
-                <mt-button type="default" class="apply" @click="handleClick" v-html="applyData.statu" v-else-if="activityDetail.showStatus==4||activityDetail.showStatus==5"></mt-button>
+                <mt-button type="default" class="hasEnd" disabled v-html="'进行中'" v-if="activityDetail.showStatus==5"></mt-button>
+                <mt-button type="default" class="apply" @click="handleClick" v-html="applyData.statu" v-else-if="activityDetail.showStatus==4"></mt-button>
             </div>
         </div>
     </div>
@@ -183,8 +184,8 @@ export default {
     width:100%;
     box-sizing: border-box;
     text-align: center;
-    height: 80px;
-    line-height: 80px;
+    height: 90px;
+    line-height: 90px;
     position: fixed;
     top:0
 }
@@ -193,7 +194,7 @@ export default {
     font-size:32px;/*px*/
 }
 .activityDetail .activityDetail-main{
-    margin-top:80px;
+    margin-top:90px;
     overflow-y: scroll
 }
 .activityDetail .activity-detail-img{
@@ -238,7 +239,7 @@ export default {
     font-size: 28px;/*px*/
 }
 .activityDetail .detCon{
-    font-size: 24px;/*px*/
+    font-size: 26px;/*px*/
 }
 .activityDetail .applyPerItem{
     margin:10px 10px;

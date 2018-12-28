@@ -9,7 +9,7 @@
             </div>
             <div class="pub-main">
                 <!-- <div class="news-pub-title">
-                    <quill-pubor 
+                    <quill-pubor
                         v-model="content"
                         ref="myQuillpubor"
                         :options="puborOption"
@@ -20,11 +20,13 @@
                 </div> -->
                 <div class="pub-titcon">
                     <div class="pub-title">
-                        <input placeholder="请输入标题" type="text" class="newsInput" v-model="newsTitle">
+                        <input placeholder="请输入标题" type="text" class="newsInput" v-model="newsTitle" maxlength="30">
                         <span class="el-icon-circle-close" @click="clearTitle"></span>
                     </div>
                     <div class="pub-con">
-                        <textarea placeholder="请输入正文......" class="newsCon" v-model="newsCon" rows="20"></textarea>
+                        <!-- <textarea placeholder="请输入正文......" class="newsCon" v-model="newsCon" rows="20" maxlength="500"></textarea> -->
+                        <div contenteditable="true" ref="editor" @input="changeEditor" class="newsCon" placeholder="请输入正文(30-500)......">
+                        </div>
                     </div>
                 </div>
                 <div class="pub-auth">
@@ -55,7 +57,7 @@
                     <div class="left-action">
                         <el-button type="primary" size="small" @click="newsPublishHandler">发表</el-button>
                         <el-button size="small" @click="newsCancelHandler">取消</el-button>
-                    </div>  
+                    </div>
                     <div class="right-action">
                         <el-button type="primary" size="small" @click="newsPreviewHandler">预览</el-button>
                         <!-- <el-button size="small" @click="newsSaveHandler">保存</el-button> -->
@@ -72,8 +74,16 @@
                 <div class="news-title">
                     {{newsTitle}}
                 </div>
-                <div class="news-content">
-                    {{newsCon}}
+                <div class="news-content" v-html="newsCon">
+                  <!-- <el-input
+                    type="textarea"
+                    :readonly=true
+                    :autosize=true
+                    resize="none"
+                    placeholder="请输入内容"
+                    v-model="newsCon">
+                  </el-input> -->
+                    <!--{{newsCon}}-->
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -128,14 +138,14 @@ export default {
       authOptions: [
         {
           label: "公开",
-          value: "1"
+          value: 1
         },
         // {
         //   label: "指定人员可见",
         //   value: "2"
         // }
       ],
-      authVal: "",
+      authVal: 1,
       dialogPreview: false,
       newsTitle:'',//新闻标题
       newsCon:"",//新闻主体
@@ -206,7 +216,7 @@ export default {
     newsCancelHandler() {
         this.newsTitle = '';
         this.newsCon = '';
-        this.authVal = '';
+        this.authVal = 1;
     },
     // 预览
     newsPreviewHandler() {
@@ -224,7 +234,17 @@ export default {
     // 请选择委员
     selectPersonHandler() {
         this.showPersonal = !this.showPersonal;
+    },
+    changeEditor(){ // 编辑器change事件
+        this.newsCon =  this.$refs.editor.innerHTML;
     }
+    /*checkNum(val,start,end,name){
+      if(val.length<start || val.length>end){
+        this[val] = val.substring(0,end);
+        console.log(this[val],'111111')
+        console.log(val.substring(0,end),'22222')
+      }
+    }*/
   },
   computed: {
     editor() {
@@ -235,7 +255,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .news-pub .news-pub-container {
   border: 1px solid #e9eef3;
 }
@@ -303,12 +323,23 @@ export default {
     margin-top: 15px;
     /* border:none; */
     width:100%;
+    height:380px;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
     font-family: Arial,Tahoma,"Microsoft Yahei","Hiragino Sans GB","Helvetica Neue",Simsun,sans-serif;;
     font-size: 14px;
     box-sizing: border-box;
+    text-indent: 28px;
+    line-height: 25px;
+}
+.pub-main .pub-con .newsCon:empty:before{
+    content: attr(placeholder);
+    color:rgb(143, 143, 143);
+    margin-left:-28px;
+}
+.pub-main .pub-con .newsCon:focus:before{
+    content:none;
 }
 .news-detail-dialog > div {
     padding-bottom: 15px;
@@ -330,4 +361,13 @@ export default {
     color: #248df9;
     cursor: pointer;
 }
+.news-content{
+    text-indent: 28px;
+    word-wrap: break-word;
+    line-height: 25px;
+}
+.news-content .el-textarea .el-textarea__inner{
+    border:none;
+    
+  }
 </style>
